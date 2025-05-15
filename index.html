@@ -328,6 +328,314 @@ input, textarea {
     -webkit-user-select: text !important;
     user-select: text !important;
 }
+
+/* ===== COPY BUTTON STYLES ===== */
+.message.bot {
+    position: relative;
+    padding-right: 40px; /* Make space for button */
+}
+
+.copy-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message.bot:hover .copy-btn {
+    opacity: 1;
+}
+
+.copy-btn i {
+    font-size: 12px;
+}
+
+/* Mobile always show */
+@media (max-width: 768px) {
+    .copy-btn {
+        opacity: 1 !important;
+    }
+}
+
+/* ===== SIMPLE MODAL STYLES ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.simple-modal {
+    background: #252525;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    border: 1px solid #444;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.modal-btn.confirm {
+    background: #d63031;
+    color: white;
+}
+
+.modal-btn.cancel {
+    background: #333;
+    color: white;
+}
+
+.modal-btn:hover {
+    transform: translateY(-2px);
+}
+
+
+/* Clear History Button Styles */
+.action-btn {
+    background: linear-gradient(45deg, #d63031, #ff7675);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    box-shadow: 0 2px 10px rgba(214, 48, 49, 0.3);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(214, 48, 49, 0.4);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+}
+
+/* Adjust the actions container */
+.actions {
+    margin: 20px 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+    }
+    
+    .actions {
+        padding: 0 10px;
+    }
+}
+
+/* Remove tap highlights on all elements */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Specifically for your Clear History button */
+.action-btn {
+    -webkit-tap-highlight-color: transparent;
+    tap-highlight-color: transparent;
+}
+
+/* Remove mobile highlight effects */
+.action-btn {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    outline: none;
+}
+
+/* History Card Styles */
+.history-card {
+    background: #1e1e1e;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+}
+
+.card-header {
+    padding: 1rem;
+    background: #252525;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+}
+
+.card-header .date {
+    color: #aaa;
+    font-size: 0.8rem;
+}
+
+.card-content {
+    padding: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.conversation-item {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.conversation-item:last-child {
+    border-bottom: none;
+}
+
+.time-stamp {
+    color: #FFA500;
+    font-size: 0.7rem;
+    margin-bottom: 0.3rem;
+}
+
+/* Make messages more compact in history view */
+.card-content .message {
+    margin: 0.3rem 0;
+    padding: 0.5rem;
+    max-width: 100%;
+    font-size: 0.9rem;
+}
+
+.card-content .user {
+    margin-left: 0;
+}
+
+.card-content .bot {
+    margin-right: 0;
+}
+
+.history-card:not(.expanded) .card-content {
+    display: none;
+}
+
+.history-card.expanded .card-content {
+    display: block;
+}
+
+/* History Card Dropdown Styles */
+.card-header {
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.card-header:hover {
+    background: #2e2e2e;
+}
+
+.toggle-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.2s;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+.history-card.expanded .toggle-icon {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.continue-chat-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: linear-gradient(45deg, #4CAF50, #45A049);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.continue-chat-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+}
+
+.continue-chat-btn:active {
+    transform: translateY(0);
+}
+
+/* Animation for dropdown */
+.card-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    padding: 0 1.2rem;
+}
+
+.history-card.expanded .card-content {
+    max-height: 500px;
+    padding: 1.2rem;
+}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -335,7 +643,7 @@ input, textarea {
     <div id="welcome-page">
         <div class="text-container">
             <div id="animatedText" class="fade-text"></div>
-            <span class="tap-to-chat">Tap anywhere to continue</span>
+            
         </div>
     </div>
 
@@ -354,15 +662,15 @@ input, textarea {
         </div>
 
         <div id="history-page">
-            <h1>Chat History</h1>
+            
             <div class="actions">
-                <button id="clear-history">Clear History</button>
+                <button id="clear-history" class="action-btn">
+    <i class="fas fa-trash-alt"></i> Clear History
+</button>
             </div>
-            <div id="history-container" class="history-grid"></div>
+            <div id="history-container"></div>
             <div id="empty-state" class="empty-state" style="display: none;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
+                
                 <h2>No Chat History</h2>
                 <p>Your conversation history will appear here</p>
             </div>
@@ -463,10 +771,51 @@ document.getElementById('reset-user').addEventListener('click', function() {
             sendButton.addEventListener('click', sendMessage);
             navChat.addEventListener('click', () => switchPage('chat'));
             navHistory.addEventListener('click', () => switchPage('history'));
-            clearHistoryBtn.addEventListener('click', clearHistory);
+            clearHistoryBtn.addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent default behavior
+    clearHistory(); // Just shows the modal
+});
 
             saveButton.addEventListener('click', saveNameAndEmail); // Renamed for clarity
+            
+        clearHistoryBtn.addEventListener('click', clearHistory);
+        
+         // Add modal close when clicking outside
+    document.getElementById('confirmModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('confirmModal')) {
+            document.getElementById('confirmModal').classList.remove('active');
         }
+    });
+    
+    
+// Add these new event listeners at the end of your setupEventListeners function:
+document.getElementById('confirmClear').addEventListener('click', () => {
+    localStorage.removeItem(CONFIG.chatHistoryKey);
+    loadHistoryView();
+    if (currentPage === 'chat') {
+        chatBox.innerHTML = '';
+    }
+    document.getElementById('confirmModal').classList.remove('active');
+});
+
+document.getElementById('cancelClear').addEventListener('click', () => {
+    document.getElementById('confirmModal').classList.remove('active');
+});
+
+document.getElementById('confirmClear').addEventListener('click', () => {
+    // ACTUAL clearing happens here only after confirmation
+    localStorage.removeItem(CONFIG.chatHistoryKey);
+    loadHistoryView();
+    chatBox.innerHTML = ''; // Clear chat view too
+    document.getElementById('confirmModal').classList.remove('active');
+});
+
+        }
+        
+        
+        
+            
+        
 
         function showNameModal() {
             nameModal.style.display = 'block';
@@ -647,12 +996,45 @@ document.getElementById('reset-user').addEventListener('click', function() {
         }
 
         function addMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
-            messageDiv.textContent = text;
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+    
+    if (sender === 'bot') {
+        messageDiv.innerHTML = `
+            ${text}
+            <button class="copy-btn" title="Copy to clipboard">
+                <i class="fas fa-copy"></i>
+            </button>
+        `;
+        
+        // Add copy functionality
+        const copyBtn = messageDiv.querySelector('.copy-btn');
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                copyBtn.style.background = '#4CAF50';
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyBtn.style.background = '#333';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                copyBtn.innerHTML = '<i class="fas fa-times"></i>';
+                copyBtn.style.background = '#f44336';
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyBtn.style.background = '#333';
+                }, 2000);
+            });
+        });
+    } else {
+        messageDiv.textContent = text;
+    }
+    
+    chatBox.appendChild(messageDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 
        function generateResponse(input) {
     const responses = [
@@ -715,16 +1097,23 @@ document.getElementById('reset-user').addEventListener('click', function() {
 }
 
         function saveToHistory(userMessage, botResponse) {
-            let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-            const newEntry = {
-                user: userMessage,
-                bot: botResponse,
-                timestamp: new Date().toISOString()
-            };
-            history.push(newEntry);
-            localStorage.setItem(CONFIG.chatHistoryKey, JSON.stringify(history));
-        }
-
+    let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+    
+    // Create a better title from the first message
+    const title = userMessage.length > 30 
+        ? userMessage.substring(0, 30) + '...'
+        : userMessage;
+    
+    const newEntry = {
+        user: userMessage,
+        bot: botResponse,
+        timestamp: new Date().toISOString(),
+        title: title // Store the title separately
+    };
+    
+    history.push(newEntry);
+    localStorage.setItem(CONFIG.chatHistoryKey, JSON.stringify(history));
+}
         function loadChatHistory() {
             const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
             if (history.length > 0) {
@@ -737,49 +1126,158 @@ document.getElementById('reset-user').addEventListener('click', function() {
         }
 
         function loadHistoryView() {
-            const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-            historyContainer.innerHTML = '';
-            if (history.length === 0) {
-                emptyState.style.display = 'block';
-                return;
-            }
-            emptyState.style.display = 'none';
-            history.slice().reverse().forEach((entry, index) => {
-                const card = document.createElement('div');
-                card.className = 'history-card';
-                const date = new Date(entry.timestamp);
-                card.innerHTML = `
-                    <div class="card-header">
-                        <h3>Conversation ${history.length - index}</h3>
-                        <div class="date">${date.toLocaleDateString()} • ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                    </div>
-                    <div class="card-content">
-                        <div class="message user">${entry.user}</div>
-                        <div class="message bot">${entry.bot}</div>
-                    </div>
-                `;
-                card.addEventListener('click', () => {
-                    switchPage('chat');
-                    chatBox.innerHTML = ''; // Clear current chat before loading selected history
-                    addMessage(entry.user, 'user');
-                    addMessage(entry.bot, 'bot');
-                });
-                historyContainer.appendChild(card);
-            });
+    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+    historyContainer.innerHTML = '';
+    
+    if (history.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+    }
+    
+    emptyState.style.display = 'none';
+    
+    // Group conversations by date
+    const groupedByDate = history.reduce((groups, entry) => {
+        const date = new Date(entry.timestamp).toDateString();
+        if (!groups[date]) {
+            groups[date] = [];
         }
-
-        function clearHistory() {
-            if (confirm('Are you sure you want to clear all chat history?')) {
-                localStorage.removeItem(CONFIG.chatHistoryKey);
-                loadHistoryView();
-                 // Also clear the chatbox if the user is currently on the chat page
-                if (currentPage === 'chat') {
-                    chatBox.innerHTML = '';
-                }
+        groups[date].push(entry);
+        return groups;
+    }, {});
+    
+    // Sort dates in descending order (newest first)
+    const sortedDates = Object.keys(groupedByDate).sort((a, b) => {
+        return new Date(b) - new Date(a);
+    });
+    
+    // Create one card per date
+    sortedDates.forEach(date => {
+        const conversations = groupedByDate[date];
+        const card = document.createElement('div');
+        card.className = 'history-card';
+        
+        // Use first user message as title
+        const firstConversation = conversations[0];
+        const conversationTitle = firstConversation.user.length > 30 
+            ? firstConversation.user.substring(0, 30) + '...' 
+            : firstConversation.user;
+        
+        // Format date nicely
+        const formattedDate = new Date(date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Create safe ID for content div
+        const contentId = 'content-' + date.replace(/\s+/g, '-');
+        
+        // Create card HTML with continue button
+        card.innerHTML = `
+            <div class="card-header">
+                <h3>${conversationTitle}</h3>
+                <div class="date">${formattedDate}</div>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="card-content" id="${contentId}">
+                <!-- Messages will be inserted here -->
+                <button class="continue-chat-btn">
+                    <i class="fas fa-comment"></i> Continue this chat
+                </button>
+            </div>
+        `;
+        
+        // Add all conversations for this date
+        const contentDiv = card.querySelector(`#${contentId}`);
+        const continueBtn = contentDiv.querySelector('.continue-chat-btn');
+        
+        // Add click handler for continue button
+        continueBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            switchPage('chat');
+            chatBox.innerHTML = '';
+            groupedByDate[date].forEach(convo => {
+                addMessage(convo.user, 'user');
+                addMessage(convo.bot, 'bot');
+            });
+        });
+        
+        conversations.forEach(conversation => {
+            const time = new Date(conversation.timestamp).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const conversationDiv = document.createElement('div');
+            conversationDiv.className = 'conversation-item';
+            conversationDiv.innerHTML = `
+                <div class="time-stamp">${time}</div>
+                <div class="message user">${conversation.user}</div>
+                <div class="message bot">
+                    ${conversation.bot}
+                    <button class="copy-btn" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Add copy functionality
+            conversationDiv.querySelector('.copy-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(conversation.bot).then(() => {
+                    const btn = e.target.closest('.copy-btn');
+                    btn.innerHTML = '<i class="fas fa-check"></i>';
+                    btn.style.background = '#4CAF50';
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-copy"></i>';
+                        btn.style.background = '#333';
+                    }, 2000);
+                });
+            });
+            
+            contentDiv.insertBefore(conversationDiv, continueBtn);
+        });
+        
+        // Toggle dropdown when clicking header
+        const cardHeader = card.querySelector('.card-header');
+        const toggleIcon = cardHeader.querySelector('.toggle-icon');
+        
+        cardHeader.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('copy-btn')) {
+                card.classList.toggle('expanded');
+                toggleIcon.classList.toggle('fa-chevron-down');
+                toggleIcon.classList.toggle('fa-chevron-up');
             }
+        });
+        
+        historyContainer.appendChild(card);
+    });
+}
+        function clearHistory() {
+             // Show our custom modal instead of default confirm
+    document.getElementById('confirmModal').classList.add('active');{
+                
+    // Just show the modal - no clearing happens here
+    document.getElementById('confirmModal').classList.add('active');
+    return false; // Prevent default behavior
+}
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
+    
+    <!-- Simple Modal -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="simple-modal">
+        <h3>Clear All History?</h3>
+        <p>This will permanently delete all your chat history.</p>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" id="cancelClear">Cancel</button>
+            <button class="modal-btn confirm" id="confirmClear">Clear</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
