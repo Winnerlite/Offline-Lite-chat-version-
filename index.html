@@ -313,6 +313,21 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Disable text selection highlighting */
+body {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    user-select: none; /* Standard syntax */
+}
+
+/* Optional: Allow selection in input fields */
+input, textarea {
+    -webkit-user-select: text !important;
+    user-select: text !important;
+}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
