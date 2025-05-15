@@ -468,85 +468,87 @@ document.getElementById('reset-user').addEventListener('click', function() {
             return emailRegex.test(email);
         }
 
-        async function saveNameAndEmail() { // MODIFIED & MADE ASYNC FOR POTENTIAL FETCH
-            const name = nameInput.value.trim();
-            const email = emailInput.value.trim();
+       async function saveNameAndEmail() {
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
 
-            if (!name) {
-                alert('Please enter a valid name!');
-                return;
-            }
-            if (!email) {
-                alert('Please enter your email!');
-                return;
-            }
-            if (!isValidEmail(email)) {
-                alert('Please enter a valid email address!');
-                return;
-            }
+    if (!name) {
+        alert('Please enter a valid name!');
+        return;
+    }
+    if (!email) {
+        alert('Please enter your email!');
+        return;
+    }
+    if (!isValidEmail(email)) {
+        alert('Please enter a valid email address!');
+        return;
+    }
 
+    // Show loading state
+    saveButton.disabled = true;
+    saveButton.textContent = 'Sending...';
+
+    try {
+        const submissionSuccess = await submitUserInfo(name, email);
+
+        if (submissionSuccess) {
             localStorage.setItem(CONFIG.userNameKey, name);
             localStorage.setItem(CONFIG.userEmailKey, email);
-            localStorage.removeItem(CONFIG.userSkippedKey);
             hideNameModal();
             displayWelcomeMessage(name);
-
-            // Attempt to send data to the "backend"
-            await submitUserInfo(name, email);
+        } else {
+            alert('Failed to submit your information. Please try again.');
         }
+    } catch (error) {
+        console.error('Error in saveNameAndEmail:', error);
+        alert('An unexpected error occurred. Please try again.');
+    } finally {
+        // Reset button state
+        saveButton.disabled = false;
+        saveButton.textContent = 'Save';
+    }
+}
 
         // NEW FUNCTION TO "SUBMIT" USER INFO
 
         async function submitUserInfo(name, email) {
-            // !!! REPLACE 'YOUR_EMAIL_HERE' WITH YOUR ACTUAL EMAIL ADDRESS FOR FORMSUBMIT.CO !!!
-            const formSubmitURL = 'https://formsubmit.co/ukowills@gmail.com';
+    const formSubmitURL = 'https://formsubmit.co/ukowills@gmail.com';
 
-            const data = {
-                name: name,
-                email: email,
-                _subject: "New User Sign-up from Spencer Chat", // Optional: Custom subject for the email you receive
-                // You can add other formsubmit.co special fields here if needed:
-                // _cc: "another@email.com", // To CC someone
-                // _captcha: "false", // To disable CAPTCHA (requires a paid plan or specific settings on formsubmit.co)
-                // _template: "table", // Optional: use a table layout for the email you receive
-                timestamp: new Date().toISOString() // Custom data you want to include
-            };
+    const data = {
+        name: name,
+        email: email,
+        _subject: "New User Sign-up from Spencer Chat",
+        _template: "table",
+        timestamp: new Date().toISOString()
+    };
 
-            console.log("Submitting user info to formsubmit.co:", data);
+    try {
+        const response = await fetch(formSubmitURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(data),
+        });
 
-            try {
-                const response = await fetch(formSubmitURL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json' // Important for AJAX with formsubmit.co
-                    },
-                    body: JSON.stringify(data),
-                });
+        // Get the response text (formsubmit.co returns HTML)
+        const responseText = await response.text();
+        console.log('Form submission response:', responseText);
 
-                if (response.ok) {
-                   const responseText = await response.text();
-console.log('FormSubmit response:', responseText);
-
-                    console.log('Successfully submitted to formsubmit.co:', responseData);
-                    if (responseData.success === "true" || responseData.success === true) { // formsubmit.co might return string "true"
-                        alert('Thanks! Your information has been submitted.'); // Optional: Notify user
-                    } else {
-                        // Handle cases where formsubmit.co indicates an issue (e.g., if they return a specific error message)
-                        console.warn('formsubmit.co submission may have had issues:', responseData.message || 'No specific error message.');
-                        alert('There was an issue submitting your information. Please try again.');
-                    }
-                } else {
-                    // Handle HTTP errors (e.g., 4xx, 5xx status codes)
-                    const errorText = await response.text(); // Get more details on the error
-                    console.error('formsubmit.co submission failed:', response.status, response.statusText, errorText);
-                    alert(`Could not submit details: ${response.statusText}. Please try again.`);
-                }
-            } catch (error) {
-                console.error('Error submitting to formsubmit.co:', error);
-                alert('An error occurred while submitting your details. Please check your internet connection and try again.');
-            }
+        if (response.ok) {
+            console.log('Successfully submitted to formsubmit.co');
+            return true; // Indicate success
+        } else {
+            console.error('Submission failed with status:', response.status);
+            return false; // Indicate failure
         }
+    } catch (error) {
+        console.error('Error submitting to formsubmit.co:', error);
+        return false; // Indicate failure
+    }
+}
 
 
         function displayWelcomeMessage(name = null) {
