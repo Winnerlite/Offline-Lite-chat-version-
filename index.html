@@ -728,6 +728,27 @@ input, textarea {
     opacity: 0.7;
     pointer-events: none;
 }
+
+#network-status {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    z-index: 1000;
+}
+
+#network-status.online {
+    background-color: #00c853;
+    color: white;
+}
+
+#network-status.offline {
+    background-color: #d50000;
+    color: white;
+}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -739,10 +760,12 @@ input, textarea {
         </div>
     </div>
 
+
     <!-- Add this button anywhere in your app-container -->
 <button id="reset-user" style="position: fixed; bottom: 70px; right: 10px; z-index: 1000; padding: 8px 12px; background: #ff4444; color: white; border: none; border-radius: 5px; cursor: pointer;">
     Reset User
 </button>
+
 
     <div id="app-container">
         <div id="chat-container">
@@ -751,6 +774,7 @@ input, textarea {
                 <input type="text" id="user-input" placeholder="Message...">
                 <button id="send-button">Send</button>
             </div>
+            <div id="network-status" class="offline">Offline</div>
         </div>
 
         <div id="history-page">
@@ -844,6 +868,46 @@ const THINKING_MESSAGES = [
         const emptyState = document.getElementById('empty-state');
         const clearHistoryBtn = document.getElementById('clear-history');
         const nameModal = document.getElementById('nameModal');
+        
+        // Online/Offline state
+let isOnline = window.navigator.onLine;
+
+// Elements
+const networkStatus = document.getElementById("network-status");
+
+// Set up listeners
+window.addEventListener("online", () => {
+    isOnline = true;
+    updateNetworkIndicator();
+});
+window.addEventListener("offline", () => {
+    isOnline = false;
+    updateNetworkIndicator();
+});
+
+function updateNetworkIndicator() {
+    if (isOnline) {
+        networkStatus.classList.add("online");
+        networkStatus.classList.remove("offline");
+        networkStatus.textContent = "Online";
+    } else {
+        networkStatus.classList.add("offline");
+        networkStatus.classList.remove("online");
+        networkStatus.textContent = "Offline";
+    }
+}
+
+function saveToLocalStorage(userMsg, botMsg) {
+    let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || {};
+    history[userMsg] = botMsg;
+    localStorage.setItem(CONFIG.chatHistoryKey, JSON.stringify(history));
+}
+
+function getFromLocalStorage(userMsg) {
+    let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || {};
+    return history[userMsg];
+}
+
         const nameInput = document.getElementById('nameInput');
         const emailInput = document.getElementById('emailInput'); // <-- ADDED EMAIL INPUT ELEMENT
         const saveButton = document.getElementById('saveButton');
@@ -1104,6 +1168,7 @@ document.getElementById('confirmClear').addEventListener('click', () => {
         saveToHistory(message, fallbackResponse);
     }
 }
+
 
 // Helper function to create thinking element
 function createThinkingElement() {
