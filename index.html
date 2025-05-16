@@ -75,12 +75,16 @@
             overflow: hidden;
         }
 
-        #chat-box {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-            background-color: #000;
-        }
+       #chat-box {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #000;
+    /* Add these new properties */
+    padding-bottom: 60px; /* Extra space at bottom */
+    scroll-behavior: smooth; /* Smooth scrolling */
+    scroll-padding-bottom: 100px; /* Keep space above input */
+}
 
         .message {
             margin: 15px;
@@ -494,7 +498,7 @@ input, textarea {
         justify-content: center;
         padding: 12px;
     }
-    
+
     .actions {
         padding: 0 10px;
     }
@@ -756,7 +760,7 @@ input, textarea {
     <div id="welcome-page">
         <div class="text-container">
             <div id="animatedText" class="fade-text"></div>
-            
+
         </div>
     </div>
 
@@ -778,7 +782,7 @@ input, textarea {
         </div>
 
         <div id="history-page">
-            
+
             <div class="actions">
                 <button id="clear-history" class="action-btn">
     <i class="fas fa-trash-alt"></i> Clear History
@@ -786,7 +790,7 @@ input, textarea {
             </div>
             <div id="history-container"></div>
             <div id="empty-state" class="empty-state" style="display: none;">
-                
+
                 <h2>No Chat History</h2>
                 <p>Your conversation history will appear here</p>
             </div>
@@ -839,17 +843,17 @@ document.getElementById('reset-user').addEventListener('click', function() {
             chatHistoryKey: "spencer_chat_history",
             userNameKey: "spencer_user_name",
             userEmailKey: "spencer_user_email", // <-- ADDED EMAIL KEY
-            
+
             geminiApiKey: "AIzaSyCYbhOMG6KKiNW6xNyyO2tCt2hWF3fBCDo" // Gemini API Key
 
         };
 
         // DOM Elements
-        
+
         // Add this with your other DOM elements
 const THINKING_MESSAGES = [
     "Processing your request...",
-    "Thinking carefully...", 
+    "Thinking carefully...",
     "Generating response...",
     "Working on it...",
      "Give me a sec...",
@@ -868,7 +872,7 @@ const THINKING_MESSAGES = [
         const emptyState = document.getElementById('empty-state');
         const clearHistoryBtn = document.getElementById('clear-history');
         const nameModal = document.getElementById('nameModal');
-        
+
         // Online/Offline state
 let isOnline = window.navigator.onLine;
 
@@ -912,7 +916,7 @@ function getFromLocalStorage(userMsg) {
         const emailInput = document.getElementById('emailInput'); // <-- ADDED EMAIL INPUT ELEMENT
         const saveButton = document.getElementById('saveButton');
         const animatedText = document.getElementById('animatedText');
-        
+
 
         // State
         let currentPage = 'chat';
@@ -946,17 +950,17 @@ function getFromLocalStorage(userMsg) {
 });
 
             saveButton.addEventListener('click', saveNameAndEmail); // Renamed for clarity
-            
+
         clearHistoryBtn.addEventListener('click', clearHistory);
-        
+
          // Add modal close when clicking outside
     document.getElementById('confirmModal').addEventListener('click', (e) => {
         if (e.target === document.getElementById('confirmModal')) {
             document.getElementById('confirmModal').classList.remove('active');
         }
     });
-    
-    
+
+
 // Add these new event listeners at the end of your setupEventListeners function:
 document.getElementById('confirmClear').addEventListener('click', () => {
     localStorage.removeItem(CONFIG.chatHistoryKey);
@@ -980,11 +984,11 @@ document.getElementById('confirmClear').addEventListener('click', () => {
 });
 
         }
-        
-        
-        
-            
-        
+
+
+
+
+
 
         function showNameModal() {
             nameModal.style.display = 'block';
@@ -1138,34 +1142,40 @@ document.getElementById('confirmClear').addEventListener('click', () => {
             }
         }
 
-        async function sendMessage() {
+      async function sendMessage() {
     const message = userInput.value.trim();
     if (!message) return;
-    
+
     addMessage(message, 'user');
     userInput.value = '';
-    
-    // Show thinking mode
-    const thinkingElement = createThinkingElement();
-    chatBox.appendChild(thinkingElement);
-    chatBox.scrollTop = chatBox.scrollHeight;
-    
-    try {
-        const response = await generateResponse(message);
-        // Remove thinking element
-        if (thinkingElement.parentNode) {
+
+    // Check cache first (works offline)
+    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || {};
+    if (history[message]) {
+        addMessage(history[message], 'bot');
+        return;
+    }
+
+    // Online: Call API
+    if (isOnline) {
+        const thinkingElement = createThinkingElement();
+        chatBox.appendChild(thinkingElement);
+
+        try {
+            const response = await generateResponse(message);
             chatBox.removeChild(thinkingElement);
-        }
-        addMessage(response, 'bot');
-        saveToHistory(message, response);
-    } catch (error) {
-        console.error("Error:", error);
-        if (thinkingElement.parentNode) {
+            addMessage(response, 'bot');
+            saveChatHistory(message, response); // Save to cache
+        } catch (error) {
             chatBox.removeChild(thinkingElement);
+            const fallback = getOfflineResponse(message);
+            addMessage(fallback, 'bot');
         }
-        const fallbackResponse = getOfflineResponse(message);
-        addMessage(fallbackResponse, 'bot');
-        saveToHistory(message, fallbackResponse);
+    }
+    // Offline: Show fallback
+    else {
+        const fallback = getOfflineResponse(message);
+        addMessage(fallback, 'bot');
     }
 }
 
@@ -1174,31 +1184,32 @@ document.getElementById('confirmClear').addEventListener('click', () => {
 function createThinkingElement() {
     const container = document.createElement('div');
     container.className = 'thinking-mode';
-    
+
     const text = document.createElement('span');
     text.className = 'thinking-text';
     text.textContent = THINKING_MESSAGES[Math.floor(Math.random() * THINKING_MESSAGES.length)];
-    
+
     const dots = document.createElement('div');
     dots.className = 'thinking-dots';
-    
+
     // Add three animated dots
     for (let i = 0; i < 3; i++) {
         const dot = document.createElement('div');
         dot.className = 'thinking-dot';
         dots.appendChild(dot);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
-    
+
     container.appendChild(text);
     container.appendChild(dots);
-    
+
     return container;
 }
 
         function addMessage(text, sender) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${sender}`;
-    
+
     if (sender === 'bot') {
         messageDiv.innerHTML = `
             ${text}
@@ -1206,7 +1217,7 @@ function createThinkingElement() {
                 <i class="fas fa-copy"></i>
             </button>
         `;
-        
+
         // Add copy functionality
         const copyBtn = messageDiv.querySelector('.copy-btn');
         copyBtn.addEventListener('click', () => {
@@ -1231,7 +1242,7 @@ function createThinkingElement() {
     } else {
         messageDiv.textContent = text;
     }
-    
+
     chatBox.appendChild(messageDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -1273,27 +1284,27 @@ function createThinkingElement() {
                    .replace(/\*(.*?)\*/g, '$1')     // Remove italic (*text*)
                    .replace(/`(.*?)`/g, '$1')       // Remove code (`text`)
                    .replace(/\[(.*?)\]\(.*?\)/g, '$1'); // Remove links ([text](url))
-        
+
         // 2. Convert line breaks to paragraphs when there are double line breaks
         text = text.replace(/\n\n+/g, '</p><p>');
-        
+
         // 3. Wrap the entire content in paragraphs (if not already)
         if (!text.startsWith('<p>')) {
             text = '<p>' + text + '</p>';
         }
-        
+
         // 4. Preserve single line breaks as <br> tags
         text = text.replace(/\n/g, '<br>');
-        
+
         // 5. Clean up any resulting HTML oddities
         text = text.replace(/<p><\/p>/g, '') // Remove empty paragraphs
                    .replace(/<p><br><\/p>/g, '') // Remove paragraphs with just line breaks
                    .replace(/\s+/g, ' ') // Collapse multiple spaces
                    .trim();
-        
+
         return text;
     }
-        
+
         function getOfflineResponse(input) {
             // Your existing offline responses
             const offlineResponses = [
@@ -1302,72 +1313,67 @@ function createThinkingElement() {
                 "Greetings! I'm just getting to know you - chatting online will help me learn how to assist you better.",
                 "I'm currently offline, so my responses are limited. Connecting online will give me full functionality."
             ];
-            
+
             return offlineResponses[Math.floor(Math.random() * offlineResponses.length)];
         }
-        
-        
-        function saveToHistory(userMessage, botResponse) {
-    let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-    
-    // Create a better title from the first message
-    const title = userMessage.length > 30 
-        ? userMessage.substring(0, 30) + '...'
-        : userMessage;
-    
-    const newEntry = {
-        user: userMessage,
-        bot: botResponse,
-        timestamp: new Date().toISOString(),
-        title: title // Store the title separately
-    };
-    
-    history.push(newEntry);
+
+
+        function saveChatHistory(userMsg, botMsg) {
+    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || {};
+    history[userMsg] = botMsg; // Store as key-value pair
     localStorage.setItem(CONFIG.chatHistoryKey, JSON.stringify(history));
 }
         function loadChatHistory() {
-            const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-            if (history.length > 0) {
-                // Optionally, load more than just the last entry, or all of the current session.
-                // For now, sticking to the original behavior of loading the very last exchange.
-                const lastEntry = history[history.length - 1];
-                addMessage(lastEntry.user, 'user');
-                addMessage(lastEntry.bot, 'bot');
-            }
-        }
+    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || {};
+    chatBox.innerHTML = '';
+
+    // Load all cached messages
+    for (const [userMsg, botMsg] of Object.entries(history)) {
+        addMessage(userMsg, 'user');
+        addMessage(botMsg, 'bot');
+    }
+
+    // Show welcome if empty
+    if (Object.keys(history).length === 0) {
+        const welcomeMsg = document.createElement('div');
+        welcomeMsg.className = 'chat-welcome-message';
+        welcomeMsg.textContent = 'Send a message to start chatting';
+        chatBox.appendChild(welcomeMsg);
+    }
+}
 
         function loadHistoryView() {
     const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
     historyContainer.innerHTML = '';
-    
+
     if (history.length === 0) {
         emptyState.style.display = 'block';
         return;
     }
-    
+
     emptyState.style.display = 'none';
-    
+
     // Group conversations by calendar date
     const groupedByDate = history.reduce((groups, entry) => {
         const dateObj = new Date(entry.timestamp);
         const dateKey = `${dateObj.getFullYear()}-${dateObj.getMonth()+1}-${dateObj.getDate()}`;
-        
+
         if (!groups[dateKey]) {
             groups[dateKey] = [];
         }
         groups[dateKey].push(entry);
         return groups;
     }, {});
-    
+
     // Sort dates in descending order
     const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
-    
+
     sortedDates.forEach(dateKey => {
         const conversations = groupedByDate[dateKey];
         const dateObj = new Date(dateKey);
         const card = document.createElement('div');
         card.className = 'history-card';
-        
+
         // Format date nicely
         const formattedDate = dateObj.toLocaleDateString('en-US', {
             weekday: 'long',
@@ -1375,13 +1381,13 @@ function createThinkingElement() {
             month: 'long',
             day: 'numeric'
         });
-        
+
         // Use first message as title
         const firstConvo = conversations[0];
-        const title = firstConvo.user.length > 30 
-            ? firstConvo.user.substring(0, 30) + '...' 
+        const title = firstConvo.user.length > 30
+            ? firstConvo.user.substring(0, 30) + '...'
             : firstConvo.user;
-        
+
         card.innerHTML = `
             <div class="card-header">
                 <h3>${title}</h3>
@@ -1408,7 +1414,7 @@ function createThinkingElement() {
                 </button>
             </div>
         `;
-        
+
         // Add event listeners
         const continueBtn = card.querySelector('.continue-chat-btn');
         continueBtn.addEventListener('click', () => {
@@ -1419,20 +1425,20 @@ function createThinkingElement() {
                 addMessage(convo.bot, 'bot');
             });
         });
-        
+
         // Toggle functionality
         const header = card.querySelector('.card-header');
         header.addEventListener('click', () => {
             card.classList.toggle('expanded');
         });
-        
+
         historyContainer.appendChild(card);
     });
 }
         function clearHistory() {
              // Show our custom modal instead of default confirm
     document.getElementById('confirmModal').classList.add('active');{
-                
+
     // Just show the modal - no clearing happens here
     document.getElementById('confirmModal').classList.add('active');
     return false; // Prevent default behavior
@@ -1441,7 +1447,7 @@ function createThinkingElement() {
 
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
-    
+
     <!-- Simple Modal -->
 <div class="modal-overlay" id="confirmModal">
     <div class="simple-modal">
