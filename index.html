@@ -1319,25 +1319,34 @@ function createThinkingElement() {
 
 
         function saveChatHistory(userMsg, botMsg) {
-    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || {};
-    history[userMsg] = botMsg; // Store as key-value pair
+    // Get existing history or initialize as array
+    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+
+    // Add new conversation with timestamp
+    history.push({
+        user: userMsg,
+        bot: botMsg,
+        timestamp: new Date().toISOString()
+    });
+
+    // Save back to localStorage
     localStorage.setItem(CONFIG.chatHistoryKey, JSON.stringify(history));
 }
         function loadChatHistory() {
-    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || {};
+    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
     chatBox.innerHTML = '';
 
     // Load all cached messages
-    for (const [userMsg, botMsg] of Object.entries(history)) {
-        addMessage(userMsg, 'user');
-        addMessage(botMsg, 'bot');
-    }
+    history.forEach(entry => {
+        addMessage(entry.user, 'user');
+        addMessage(entry.bot, 'bot');
+    });
 
     // Show welcome if empty
-    if (Object.keys(history).length === 0) {
+    if (history.length === 0) {
         const welcomeMsg = document.createElement('div');
         welcomeMsg.className = 'chat-welcome-message';
-        welcomeMsg.textContent = 'Send a message to start chatting';
+        welcomeMsg.textContent = '';
         chatBox.appendChild(welcomeMsg);
     }
 }
