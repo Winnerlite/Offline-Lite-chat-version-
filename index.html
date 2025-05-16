@@ -203,12 +203,37 @@
             color: #aaa;
         }
 
-        .card-content {
-            padding: 1.2rem;
-            max-height: 200px;
-            overflow-y: auto;
-        }
+        /* Update your existing .card-content styles */
+.card-content {
+    padding: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #FFA500 #252525;
+}
 
+/* Custom scrollbar for WebKit browsers */
+.card-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.card-content::-webkit-scrollbar-track {
+    background: #252525;
+}
+
+.card-content::-webkit-scrollbar-thumb {
+    background-color: #FFA500;
+    border-radius: 3px;
+}
+
+/* Ensure continue button stays visible */
+.continue-chat-btn {
+    position: sticky;
+    bottom: 0;
+    background: #252525;
+    z-index: 1;
+    margin-top: 10px;
+}
         /* Bottom Navigation */
         .bottom-nav {
             display: flex;
@@ -636,6 +661,73 @@ input, textarea {
     max-height: 500px;
     padding: 1.2rem;
 }
+
+/* Thinking Mode Styles - UPDATED */
+.thinking-mode {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: #252525;
+    border-radius: 15px;
+    margin: 10px 15px;
+    max-width: 80%;
+    align-self: flex-start;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.thinking-text {
+    font-size: 14px;
+    color: #aaa;
+    margin-right: 8px;
+}
+
+.thinking-dots {
+    display: flex;
+    gap: 5px;
+}
+
+.thinking-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #FFA500;
+    opacity: 0.4;
+    animation: thinking-pulse 1.5s infinite ease-in-out;
+}
+
+.thinking-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.thinking-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* Add this with your other keyframes */
+@keyframes thinking-pulse {
+    0%, 100% {
+        opacity: 0.4;
+        transform: scale(0.9);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+/* Add to your existing styles */
+.chat-welcome-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #FFA500;
+    font-size: 1.5rem;
+    opacity: 0.7;
+    pointer-events: none;
+}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -723,10 +815,22 @@ document.getElementById('reset-user').addEventListener('click', function() {
             chatHistoryKey: "spencer_chat_history",
             userNameKey: "spencer_user_name",
             userEmailKey: "spencer_user_email", // <-- ADDED EMAIL KEY
+            
+            geminiApiKey: "AIzaSyCYbhOMG6KKiNW6xNyyO2tCt2hWF3fBCDo" // Gemini API Key
 
         };
 
         // DOM Elements
+        
+        // Add this with your other DOM elements
+const THINKING_MESSAGES = [
+    "Processing your request...",
+    "Thinking carefully...", 
+    "Generating response...",
+    "Working on it...",
+     "Give me a sec...",
+      "hmmm..."
+];
         const welcomePage = document.getElementById('welcome-page');
         const appContainer = document.getElementById('app-container');
         const chatContainer = document.getElementById('chat-container');
@@ -744,6 +848,7 @@ document.getElementById('reset-user').addEventListener('click', function() {
         const emailInput = document.getElementById('emailInput'); // <-- ADDED EMAIL INPUT ELEMENT
         const saveButton = document.getElementById('saveButton');
         const animatedText = document.getElementById('animatedText');
+        
 
         // State
         let currentPage = 'chat';
@@ -969,31 +1074,61 @@ document.getElementById('confirmClear').addEventListener('click', () => {
             }
         }
 
-        function sendMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
-            addMessage(message, 'user');
-            userInput.value = '';
-
-            const typingIndicator = document.createElement('div');
-            typingIndicator.className = 'typing';
-            typingIndicator.innerHTML = `
-                <span class="typing-dots"></span>
-                <span class="typing-dots"></span>
-                <span class="typing-dots"></span>
-            `;
-            chatBox.appendChild(typingIndicator);
-            chatBox.scrollTop = chatBox.scrollTop + 100; // Consider chatBox.scrollHeight
-
-            setTimeout(() => {
-                if (typingIndicator.parentNode) {
-                    chatBox.removeChild(typingIndicator);
-                }
-                const response = generateResponse(message);
-                addMessage(response, 'bot');
-                saveToHistory(message, response);
-            }, 1500);
+        async function sendMessage() {
+    const message = userInput.value.trim();
+    if (!message) return;
+    
+    addMessage(message, 'user');
+    userInput.value = '';
+    
+    // Show thinking mode
+    const thinkingElement = createThinkingElement();
+    chatBox.appendChild(thinkingElement);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    
+    try {
+        const response = await generateResponse(message);
+        // Remove thinking element
+        if (thinkingElement.parentNode) {
+            chatBox.removeChild(thinkingElement);
         }
+        addMessage(response, 'bot');
+        saveToHistory(message, response);
+    } catch (error) {
+        console.error("Error:", error);
+        if (thinkingElement.parentNode) {
+            chatBox.removeChild(thinkingElement);
+        }
+        const fallbackResponse = getOfflineResponse(message);
+        addMessage(fallbackResponse, 'bot');
+        saveToHistory(message, fallbackResponse);
+    }
+}
+
+// Helper function to create thinking element
+function createThinkingElement() {
+    const container = document.createElement('div');
+    container.className = 'thinking-mode';
+    
+    const text = document.createElement('span');
+    text.className = 'thinking-text';
+    text.textContent = THINKING_MESSAGES[Math.floor(Math.random() * THINKING_MESSAGES.length)];
+    
+    const dots = document.createElement('div');
+    dots.className = 'thinking-dots';
+    
+    // Add three animated dots
+    for (let i = 0; i < 3; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'thinking-dot';
+        dots.appendChild(dot);
+    }
+    
+    container.appendChild(text);
+    container.appendChild(dots);
+    
+    return container;
+}
 
         function addMessage(text, sender) {
     const messageDiv = document.createElement('div');
@@ -1036,66 +1171,77 @@ document.getElementById('confirmClear').addEventListener('click', () => {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-       function generateResponse(input) {
-    const responses = [
-        // Friendly greetings
-        "Hi there! I'm Spencer, your AI assistant. Currently offline, but I'd love to help more when we connect online.",
-        "Hello! For my best assistance, I'll need to sync with you online first.",
-        "Greetings! I'm just getting to know you - chatting online will help me learn how to assist you better.",
+       async function generateResponse(input) {
+        console.log("User Input:", input);
 
-        // Clear offline status explanations
-        "I'm currently offline, so my responses are limited. Connecting online will give me full functionality.",
-        "Offline mode active: My capabilities are restricted until we establish an online connection.",
-        "Notice: Operating in offline mode. Full features unlock when we chat online.",
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CONFIG.geminiApiKey}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: input
+                        }]
+                    }]
+                })
+            });
 
-        // Encouraging online connection
-        "Let's chat online for 5-10 minutes first - that helps me understand how best to assist you offline!",
-        "For personalized assistance, please connect online so I can learn your preferences.",
-        "I become much more helpful after we've chatted online for a bit - would you like to connect?",
+            const data = await response.json();
+            console.log("API Response:", data);
 
-        // Setting expectations
-        "While offline, I can offer basic responses. For in-depth help, we'll need an online session.",
-        "Think of this as our first meeting - I'll be much more useful after we sync online.",
-        "I'm like a new notebook right now - chatting online will help me fill pages with how to help you.",
-
-        // Playful analogies
-        "I'm currently running on starter batteries - an online chat will switch me to full power!",
-        "Offline me is like a car in neutral - let's go online to put me in gear!",
-        "Right now I'm like a phone with spotty service - much clearer when we connect properly!",
-
-        // Transition suggestions
-        "Shall we continue this conversation online where I can be more helpful?",
-        "I'd love to pick this up when we're online - that's when I really shine!",
-        "This is interesting! Let's switch to online chat so I can give you better responses.",
-
-        // Value propositions
-        "Online chats help me build a memory of your preferences for better future assistance.",
-        "Every online conversation makes me smarter about how to help you specifically.",
-        "The more we chat online, the more tailored my responses become to your needs.",
-
-        // Reassurance
-        "Don't worry - even brief online chats significantly improve my ability to assist you.",
-        "Just 5-10 minutes online will give me enough data to be much more useful.",
-        "I'm designed to learn quickly - a short online session will dramatically improve my responses.",
-
-        // Final fallbacks
-        "I'm Spencer at your service! Currently offline but ready to connect for better assistance.",
-        "Hello! Let's establish an online connection first for optimal results."
-    ];
-
-    // Optional: Add some basic input recognition
-    const lowerInput = input.toLowerCase();
-    if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
-        return responses[0]; // Return a greeting response
-    }
-    if (lowerInput.includes('offline') || lowerInput.includes('connect')) {
-        return responses[3]; // Return an offline explanation
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                return formatBotResponse(data.candidates[0].content.parts[0].text);
+            } else {
+                console.error("Unexpected API response format");
+                return getOfflineResponse(input);
+            }
+        } catch (error) {
+            console.error("Error calling Gemini API:", error);
+            return getOfflineResponse(input);
+        }
     }
 
-    // Default random response
-    return responses[Math.floor(Math.random() * responses.length)];
-}
-
+    function formatBotResponse(text) {
+        // 1. Remove markdown syntax
+        text = text.replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold (**text**)
+                   .replace(/\*(.*?)\*/g, '$1')     // Remove italic (*text*)
+                   .replace(/`(.*?)`/g, '$1')       // Remove code (`text`)
+                   .replace(/\[(.*?)\]\(.*?\)/g, '$1'); // Remove links ([text](url))
+        
+        // 2. Convert line breaks to paragraphs when there are double line breaks
+        text = text.replace(/\n\n+/g, '</p><p>');
+        
+        // 3. Wrap the entire content in paragraphs (if not already)
+        if (!text.startsWith('<p>')) {
+            text = '<p>' + text + '</p>';
+        }
+        
+        // 4. Preserve single line breaks as <br> tags
+        text = text.replace(/\n/g, '<br>');
+        
+        // 5. Clean up any resulting HTML oddities
+        text = text.replace(/<p><\/p>/g, '') // Remove empty paragraphs
+                   .replace(/<p><br><\/p>/g, '') // Remove paragraphs with just line breaks
+                   .replace(/\s+/g, ' ') // Collapse multiple spaces
+                   .trim();
+        
+        return text;
+    }
+        
+        function getOfflineResponse(input) {
+            // Your existing offline responses
+            const offlineResponses = [
+                "Hi there! I'm Spencer, your AI assistant. Currently offline, but I'd love to help more when we connect online.",
+                "Hello! For my best assistance, I'll need to sync with you online first.",
+                "Greetings! I'm just getting to know you - chatting online will help me learn how to assist you better.",
+                "I'm currently offline, so my responses are limited. Connecting online will give me full functionality."
+            ];
+            
+            return offlineResponses[Math.floor(Math.random() * offlineResponses.length)];
+        }
+        
+        
         function saveToHistory(userMessage, botResponse) {
     let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
     
@@ -1136,120 +1282,83 @@ document.getElementById('confirmClear').addEventListener('click', () => {
     
     emptyState.style.display = 'none';
     
-    // Group conversations by date
+    // Group conversations by calendar date
     const groupedByDate = history.reduce((groups, entry) => {
-        const date = new Date(entry.timestamp).toDateString();
-        if (!groups[date]) {
-            groups[date] = [];
+        const dateObj = new Date(entry.timestamp);
+        const dateKey = `${dateObj.getFullYear()}-${dateObj.getMonth()+1}-${dateObj.getDate()}`;
+        
+        if (!groups[dateKey]) {
+            groups[dateKey] = [];
         }
-        groups[date].push(entry);
+        groups[dateKey].push(entry);
         return groups;
     }, {});
     
-    // Sort dates in descending order (newest first)
-    const sortedDates = Object.keys(groupedByDate).sort((a, b) => {
-        return new Date(b) - new Date(a);
-    });
+    // Sort dates in descending order
+    const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
     
-    // Create one card per date
-    sortedDates.forEach(date => {
-        const conversations = groupedByDate[date];
+    sortedDates.forEach(dateKey => {
+        const conversations = groupedByDate[dateKey];
+        const dateObj = new Date(dateKey);
         const card = document.createElement('div');
         card.className = 'history-card';
         
-        // Use first user message as title
-        const firstConversation = conversations[0];
-        const conversationTitle = firstConversation.user.length > 30 
-            ? firstConversation.user.substring(0, 30) + '...' 
-            : firstConversation.user;
-        
         // Format date nicely
-        const formattedDate = new Date(date).toLocaleDateString('en-US', {
+        const formattedDate = dateObj.toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric'
         });
         
-        // Create safe ID for content div
-        const contentId = 'content-' + date.replace(/\s+/g, '-');
+        // Use first message as title
+        const firstConvo = conversations[0];
+        const title = firstConvo.user.length > 30 
+            ? firstConvo.user.substring(0, 30) + '...' 
+            : firstConvo.user;
         
-        // Create card HTML with continue button
         card.innerHTML = `
             <div class="card-header">
-                <h3>${conversationTitle}</h3>
+                <h3>${title}</h3>
                 <div class="date">${formattedDate}</div>
                 <i class="fas fa-chevron-down toggle-icon"></i>
             </div>
-            <div class="card-content" id="${contentId}">
-                <!-- Messages will be inserted here -->
+            <div class="card-content">
+                ${conversations.map(convo => `
+                    <div class="conversation-item">
+                        <div class="time-stamp">
+                            ${new Date(convo.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                        </div>
+                        <div class="message user">${convo.user}</div>
+                        <div class="message bot">
+                            ${convo.bot}
+                            <button class="copy-btn" title="Copy to clipboard">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
                 <button class="continue-chat-btn">
                     <i class="fas fa-comment"></i> Continue this chat
                 </button>
             </div>
         `;
         
-        // Add all conversations for this date
-        const contentDiv = card.querySelector(`#${contentId}`);
-        const continueBtn = contentDiv.querySelector('.continue-chat-btn');
-        
-        // Add click handler for continue button
-        continueBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
+        // Add event listeners
+        const continueBtn = card.querySelector('.continue-chat-btn');
+        continueBtn.addEventListener('click', () => {
             switchPage('chat');
             chatBox.innerHTML = '';
-            groupedByDate[date].forEach(convo => {
+            conversations.forEach(convo => {
                 addMessage(convo.user, 'user');
                 addMessage(convo.bot, 'bot');
             });
         });
         
-        conversations.forEach(conversation => {
-            const time = new Date(conversation.timestamp).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            const conversationDiv = document.createElement('div');
-            conversationDiv.className = 'conversation-item';
-            conversationDiv.innerHTML = `
-                <div class="time-stamp">${time}</div>
-                <div class="message user">${conversation.user}</div>
-                <div class="message bot">
-                    ${conversation.bot}
-                    <button class="copy-btn" title="Copy to clipboard">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-            `;
-            
-            // Add copy functionality
-            conversationDiv.querySelector('.copy-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                navigator.clipboard.writeText(conversation.bot).then(() => {
-                    const btn = e.target.closest('.copy-btn');
-                    btn.innerHTML = '<i class="fas fa-check"></i>';
-                    btn.style.background = '#4CAF50';
-                    setTimeout(() => {
-                        btn.innerHTML = '<i class="fas fa-copy"></i>';
-                        btn.style.background = '#333';
-                    }, 2000);
-                });
-            });
-            
-            contentDiv.insertBefore(conversationDiv, continueBtn);
-        });
-        
-        // Toggle dropdown when clicking header
-        const cardHeader = card.querySelector('.card-header');
-        const toggleIcon = cardHeader.querySelector('.toggle-icon');
-        
-        cardHeader.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('copy-btn')) {
-                card.classList.toggle('expanded');
-                toggleIcon.classList.toggle('fa-chevron-down');
-                toggleIcon.classList.toggle('fa-chevron-up');
-            }
+        // Toggle functionality
+        const header = card.querySelector('.card-header');
+        header.addEventListener('click', () => {
+            card.classList.toggle('expanded');
         });
         
         historyContainer.appendChild(card);
