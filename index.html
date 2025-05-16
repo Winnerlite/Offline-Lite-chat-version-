@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spencer Chat</title>
@@ -721,6 +722,9 @@ input, textarea {
 }
 
 /* Add to your existing styles */
+/* Welcome Message Styling with Fade Effect */
+/* Welcome Message Styling with Fade Effect */
+/* Welcome Message Styling */
 .chat-welcome-message {
     position: absolute;
     top: 50%;
@@ -728,11 +732,38 @@ input, textarea {
     transform: translate(-50%, -50%);
     text-align: center;
     color: #FFA500;
-    font-size: 1.5rem;
-    opacity: 0.7;
+    font-family: 'Montserrat', 'Poppins', sans-serif; /* More modern font stack */
+    font-size: 2rem; /* Larger size */
+    font-weight: 700; /* Bold weight */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+    opacity: 0.9; /* More visible */
     pointer-events: none;
+    transition: all 0.3s ease-in-out;
+    z-index: 1;
+    width: 90%; /* Better text containment */
+    max-width: 600px; /* Prevents overly wide text on large screens */
+    padding: 20px;
+    line-height: 1.3;
 }
 
+/* Faded state */
+.chat-welcome-message.faded {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Add this to your head section if not already present */
+
+/* Completely hidden when chat has messages */
+.chat-welcome-message.faded {
+    opacity: 0; /* Fully transparent */
+    visibility: hidden; /* Also removes from layout */
+    transition: opacity 0.3s ease-in-out, visibility 0.3s;
+}
+
+
+
+/* Network Status Indicator */
 #network-status {
     position: fixed;
     top: 10px;
@@ -742,17 +773,152 @@ input, textarea {
     font-size: 0.9rem;
     font-weight: bold;
     z-index: 1000;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 #network-status.online {
     background-color: #00c853;
     color: white;
+    animation: pulseOnline 2s infinite;
 }
 
 #network-status.offline {
     background-color: #d50000;
     color: white;
+    animation: pulseOffline 2s infinite;
 }
+
+/* Optional: Status alert animation */
+.network-alert {
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    transition: all 0.5s ease;
+}
+
+.network-alert.online {
+    background: #00c853;
+    color: white;
+}
+
+.network-alert.offline {
+    background: #d50000;
+    color: white;
+}
+
+.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+@keyframes pulseOnline {
+    0% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 200, 83, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0); }
+}
+
+@keyframes pulseOffline {
+    0% { box-shadow: 0 0 0 0 rgba(213, 0, 0, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(213, 0, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(213, 0, 0, 0); }
+}
+
+
+/* Base Responsive Styles coming back to evaluate this*/
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    min-height: 100vh;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* Make all elements border-box */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 13px;
+    }
+}
+
+/* New Chat Button Container */
+#new-chat-btn-container {
+    position: fixed;
+    bottom: 180px; /* Positioned above input container */
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 999;
+    padding: 0 20px;
+}
+
+/* New Chat Button Styling */
+#new-chat-btn {
+    background: #1a1a1a;
+    color: white;
+    border: 1px solid #333;
+    border-radius: 25px;
+    padding: 10px 25px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+#new-chat-btn:hover {
+    background: #252525;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+#new-chat-btn:active {
+    transform: translateY(0);
+    background: #1a1a1a;
+}
+
+
+    /* Chat Link Styling */
+.message.bot .chat-link {
+    color: #FFA500;
+    text-decoration: underline;
+    word-break: break-all;
+    transition: all 0.2s ease;
+}
+
+.message.bot .chat-link:hover {
+    color: #FF8C00;
+    text-decoration: none;
+}
+
+/* Make sure links are visible in dark mode */
+.message.bot a:visited {
+    color: #FFA500;
+}
+
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -774,9 +940,16 @@ input, textarea {
     <div id="app-container">
         <div id="chat-container">
             <div id="chat-box"></div>
+            
+             <!-- Independent New Chat Button -->
+    <div id="new-chat-btn-container">
+        <button id="new-chat-btn">
+            <i class="fas fa-comment"></i> New Chat
+        </button>
+    </div>
             <div id="input-container">
-                <input type="text" id="user-input" placeholder="Message...">
-                <button id="send-button">Send</button>
+                <textarea id="user-input" placeholder="Message..." rows="2"></textarea>
+<button id="send-button">Send</button>
             </div>
             <div id="network-status" class="offline">Offline</div>
         </div>
@@ -821,6 +994,31 @@ input, textarea {
     </div>
 
     <script>
+         
+         document.getElementById('new-chat-btn').addEventListener('click', function() {
+    // Clear the chat box
+    const chatBox = document.getElementById('chat-box');
+    chatBox.innerHTML = '';
+    
+    // Add welcome message with your custom text
+    const welcomeMsg = document.createElement('div');
+    welcomeMsg.className = 'chat-welcome-message';
+    welcomeMsg.textContent = 'Hi, How Can I Help';
+    chatBox.appendChild(welcomeMsg);
+    
+    // Scroll to top
+    chatBox.scrollTop = 0;
+    
+    
+    // Scroll to top
+    document.getElementById('chat-box').scrollTop = 0;
+    
+    // Optional visual feedback
+    this.classList.add('clicked');
+    setTimeout(() => {
+        this.classList.remove('clicked');
+    }, 300);
+});
 
     // Add this to your existing JavaScript
 document.getElementById('reset-user').addEventListener('click', function() {
@@ -874,33 +1072,58 @@ const THINKING_MESSAGES = [
         const nameModal = document.getElementById('nameModal');
 
         // Online/Offline state
-let isOnline = window.navigator.onLine;
+// Network Status Detection
+let isOnline = navigator.onLine;
 
-// Elements
-const networkStatus = document.getElementById("network-status");
-
-// Set up listeners
-window.addEventListener("online", () => {
-    isOnline = true;
+function initNetworkStatus() {
+    // Update immediately on load
     updateNetworkIndicator();
-});
-window.addEventListener("offline", () => {
-    isOnline = false;
-    updateNetworkIndicator();
-});
+    
+    // Set up event listeners
+    window.addEventListener('online', handleNetworkChange);
+    window.addEventListener('offline', handleNetworkChange);
+}
 
-function updateNetworkIndicator() {
+function handleNetworkChange() {
+    isOnline = navigator.onLine;
+    updateNetworkIndicator();
+    
+    // Optional: Notify user of status change
     if (isOnline) {
-        networkStatus.classList.add("online");
-        networkStatus.classList.remove("offline");
-        networkStatus.textContent = "Online";
+        showTemporaryStatus("You're back online!", 'online');
     } else {
-        networkStatus.classList.add("offline");
-        networkStatus.classList.remove("online");
-        networkStatus.textContent = "Offline";
+        showTemporaryStatus("You've gone offline", 'offline');
     }
 }
 
+function updateNetworkIndicator() {
+    const networkStatus = document.getElementById("network-status");
+    if (!networkStatus) return;
+    
+    if (isOnline) {
+        networkStatus.className = "online";
+        networkStatus.innerHTML = '<i class="fas fa-wifi"></i> Online';
+    } else {
+        networkStatus.className = "offline";
+        networkStatus.innerHTML = '<i class="fas fa-plug"></i> Offline';
+    }
+}
+
+// Optional: Temporary status message
+function showTemporaryStatus(message, type) {
+    const status = document.createElement('div');
+    status.className = `network-alert ${type}`;
+    status.innerHTML = message;
+    document.body.appendChild(status);
+    
+    setTimeout(() => {
+        status.classList.add('fade-out');
+        setTimeout(() => status.remove(), 1000);
+    }, 3000);
+}
+
+// Initialize when the app starts
+initNetworkStatus();
 function saveToLocalStorage(userMsg, botMsg) {
     let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || {};
     history[userMsg] = botMsg;
@@ -938,9 +1161,17 @@ function getFromLocalStorage(userMsg) {
 
         function setupEventListeners() {
             welcomePage.addEventListener('click', startChatApp);
-            userInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendMessage();
-            });
+            
+document.getElementById("user-input").addEventListener("keydown", function(event) {
+    if (event.key === "Enter" && !event.ctrlKey) {
+        // Allow newline
+        return;
+    }
+    if (event.key === "Enter" && event.ctrlKey) {
+        event.preventDefault();
+        document.getElementById("send-button").click();
+    }
+});
             sendButton.addEventListener('click', sendMessage);
             navChat.addEventListener('click', () => switchPage('chat'));
             navHistory.addEventListener('click', () => switchPage('history'));
@@ -1146,13 +1377,19 @@ document.getElementById('confirmClear').addEventListener('click', () => {
     const message = userInput.value.trim();
     if (!message) return;
 
+// Fade welcome message when first real message is sent
+    const welcomeMsg = document.querySelector('.chat-welcome-message');
+    if (welcomeMsg) {
+        welcomeMsg.classList.add('faded');
+    }
+    
     addMessage(message, 'user');
     userInput.value = '';
 
     // Check cache first (works offline)
-    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || {};
-    if (history[message]) {
-        addMessage(history[message], 'bot');
+    const cachedResponse = checkCache(message);
+    if (cachedResponse) {
+        addMessage(cachedResponse, 'bot');
         return;
     }
 
@@ -1165,8 +1402,9 @@ document.getElementById('confirmClear').addEventListener('click', () => {
             const response = await generateResponse(message);
             chatBox.removeChild(thinkingElement);
             addMessage(response, 'bot');
-            saveChatHistory(message, response); // Save to cache
+            saveToCache(message, response); // Save to cache
         } catch (error) {
+            console.error("API Error:", error);
             chatBox.removeChild(thinkingElement);
             const fallback = getOfflineResponse(message);
             addMessage(fallback, 'bot');
@@ -1179,6 +1417,46 @@ document.getElementById('confirmClear').addEventListener('click', () => {
     }
 }
 
+// Cache management functions
+function saveToCache(userMsg, botMsg) {
+    try {
+        let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+        
+        // Add new conversation with timestamp
+        history.push({
+            user: userMsg,
+            bot: botMsg,
+            timestamp: new Date().toISOString()
+        });
+
+        // Keep only the last 100 conversations to prevent storage overflow
+        if (history.length > 100) {
+            history = history.slice(-100);
+        }
+
+        localStorage.setItem(CONFIG.chatHistoryKey, JSON.stringify(history));
+        return true;
+    } catch (e) {
+        console.error("Error saving to cache:", e);
+        return false;
+    }
+}
+
+function checkCache(userMsg) {
+    try {
+        const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+        
+        // Find the most recent matching message (case insensitive)
+        const match = history.reverse().find(entry => 
+            entry.user.toLowerCase() === userMsg.toLowerCase()
+        );
+        
+        return match ? match.bot : null;
+    } catch (e) {
+        console.error("Error checking cache:", e);
+        return null;
+    }
+}
 
 // Helper function to create thinking element
 function createThinkingElement() {
@@ -1279,44 +1557,100 @@ function createThinkingElement() {
     }
 
     function formatBotResponse(text) {
-        // 1. Remove markdown syntax
-        text = text.replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold (**text**)
-                   .replace(/\*(.*?)\*/g, '$1')     // Remove italic (*text*)
-                   .replace(/`(.*?)`/g, '$1')       // Remove code (`text`)
-                   .replace(/\[(.*?)\]\(.*?\)/g, '$1'); // Remove links ([text](url))
+    // 1. Convert URLs to clickable links
+    text = text.replace(
+        /(https?:\/\/[^\s]+)/g, 
+        '<a href="$1" target="_blank" rel="noopener noreferrer" class="chat-link">$1</a>'
+    );
+    
+    // 2. Keep your existing formatting
+    text = text.replace(/\*\*(.*?)\*\*/g, '$1')
+               .replace(/\*(.*?)\*/g, '$1')
+               .replace(/`(.*?)`/g, '$1');
+    
+    // 3. Rest of your formatting...
+    text = text.replace(/\n\n+/g, '</p><p>')
+               .replace(/\n/g, '<br>');
+    
+    if (!text.startsWith('<p>')) {
+        text = '<p>' + text + '</p>';
+    }
+    
+    return text.replace(/<p><\/p>/g, '')
+               .replace(/<p><br><\/p>/g, '')
+               .trim();
+}
+        function getOfflineResponse(input) {
+    // Try to find the most relevant cached answer
+    try {
+        const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+        
+        // 1. First try exact match (case insensitive)
+        const exactMatch = history.findLast(entry => 
+            entry.user.toLowerCase() === input.toLowerCase()
+        );
+        if (exactMatch) return exactMatch.bot;
 
-        // 2. Convert line breaks to paragraphs when there are double line breaks
-        text = text.replace(/\n\n+/g, '</p><p>');
-
-        // 3. Wrap the entire content in paragraphs (if not already)
-        if (!text.startsWith('<p>')) {
-            text = '<p>' + text + '</p>';
+        // 2. Try keyword matching if no exact match
+        const keywords = input.toLowerCase().split(/\s+/);
+        const keywordMatch = history.findLast(entry => 
+            keywords.some(keyword => 
+                entry.user.toLowerCase().includes(keyword) &&
+                keyword.length > 3 // Only consider meaningful keywords
+            )
+        );
+        
+        if (keywordMatch) {
+            return this.formatRelevantResponse(keywordMatch.bot);
         }
 
-        // 4. Preserve single line breaks as <br> tags
-        text = text.replace(/\n/g, '<br>');
+        // 3. Find most recent similar response using embeddings (simplified)
+        const similarMatch = this.findSemanticallySimilar(input, history);
+        if (similarMatch) return similarMatch.bot;
 
-        // 5. Clean up any resulting HTML oddities
-        text = text.replace(/<p><\/p>/g, '') // Remove empty paragraphs
-                   .replace(/<p><br><\/p>/g, '') // Remove paragraphs with just line breaks
-                   .replace(/\s+/g, ' ') // Collapse multiple spaces
-                   .trim();
-
-        return text;
+    } catch (e) {
+        console.error("Cache access error:", e);
     }
 
-        function getOfflineResponse(input) {
-            // Your existing offline responses
-            const offlineResponses = [
-                "Hi there! I'm Spencer, your AI assistant. Currently offline, but I'd love to help more when we connect online.",
-                "Hello! For my best assistance, I'll need to sync with you online first.",
-                "Greetings! I'm just getting to know you - chatting online will help me learn how to assist you better.",
-                "I'm currently offline, so my responses are limited. Connecting online will give me full functionality."
-            ];
+    // Final fallback
+    return this.getRandomFallbackResponse();
+}
 
-            return offlineResponses[Math.floor(Math.random() * offlineResponses.length)];
-        }
+// Helper functions
+function formatRelevantResponse(botResponse) {
+    const phrases = [
+        "This might help:",
+        "Relevant information I found:",
+        "Here's what I know:",
+        "This could be useful:",
+        "From my knowledge:"
+    ];
+    const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+    return `${randomPhrase}<br><br>${botResponse}`;
+}
 
+function findSemanticallySimilar(input, history) {
+    // Simplified semantic matching - in a real app you'd use embeddings
+    const inputWords = new Set(input.toLowerCase().split(/\W+/));
+    return history.findLast(entry => {
+        const entryWords = new Set(entry.user.toLowerCase().split(/\W+/));
+        const intersection = [...inputWords].filter(word => 
+            word.length > 3 && entryWords.has(word)
+        );
+        return intersection.length >= 2; // At least 2 meaningful words in common
+    });
+}
+
+function getRandomFallbackResponse() {
+    const fallbacks = [
+        "I'm offline right now, but I'll be able to help when we're back online.",
+        "I can't access my full knowledge while offline. Let's reconnect later.",
+        "For the most accurate help, please check back when I'm online.",
+        "My offline memory doesn't contain information about this topic.",
+        "I'd love to help with this once we're back online!"
+    ];
+    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+}
 
         function saveChatHistory(userMsg, botMsg) {
     // Get existing history or initialize as array
