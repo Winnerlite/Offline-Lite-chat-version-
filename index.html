@@ -1160,8 +1160,8 @@ populateModelSelector();
             }
         }
 
-       async function submitUserInfo(name, email) {
-    const formSubmitURL = 'https://formsubmit.co/ajax/ukowills@gmail.com'; // Note the /ajax/ endpoint
+      async function submitUserInfo(name, email) {
+    const formSubmitURL = 'https://formsubmit.co/ajax/ukowills@gmail.com'; // AJAX endpoint
 
     const data = {
         name: name,
@@ -1181,13 +1181,20 @@ populateModelSelector();
             body: JSON.stringify(data),
         });
 
-        const responseData = await response.json();
-        console.log('Form submission response:', responseData);
+        // Parse JSON response (FormSubmit returns { success: true/false })
+        const result = await response.json();
 
-        // Check for success message in the response
-        return responseData.success === true;
+        // Check if FormSubmit confirmed success
+        if (result.success) {
+            console.log("Form submitted successfully:", result);
+            return true;
+        } else {
+            console.error("FormSubmit returned an error:", result.message);
+            return false;
+        }
+
     } catch (error) {
-        console.error('Error submitting to formsubmit.co:', error);
+        console.error('Network/API error:', error);
         return false;
     }
 }
