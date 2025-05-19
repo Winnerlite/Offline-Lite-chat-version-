@@ -574,7 +574,7 @@
                 padding: 12px;
             }
         }
-        
+
         /* Storage Description Text */
 .storage-description {
     text-align: center;
@@ -611,7 +611,7 @@
 
 
 
-//For Modal 
+//For Modal
 #userGuideModal {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -738,7 +738,56 @@ code {
   cursor: text;
 }
 
+/*privacy policy modal*/
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
 
+.modal-content {
+    background: #1e1e1e;
+    padding: 30px;
+    max-width: 600px;
+    width: 90%;
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: #FFA500;
+}
+
+.modal-content ol {
+    padding-left: 20px;
+    line-height: 1.6;
+}
+
+.modal-content a {
+    color: #FFA500;
+    text-decoration: underline;
+}
+
+.close-button {
+    background: #FFA500;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -763,20 +812,20 @@ code {
                     </div>
                     <div class="storage-meter">
                         <div id="storage-progress" class="storage-progress"></div>
-                        
+
                     </div>
                 </div>
-                
+
                 <!-- ADD THIS NEW STORAGE DESCRIPTION TEXT -->
         <p class="storage-description">
-            🔋 Your AI companion has stored <span id="storage-percentage">0%</span> of knowledge locally 
+            🔋 Your AI companion has stored <span id="storage-percentage">0%</span> of knowledge locally
             for instant offline access!
         </p>
-        
+
                 <button id="clear-storage-btn" class="action-btn">
                     <i class="fas fa-trash-alt"></i> Clear All Chat Data
                 </button>
-                
+
                 <div class="settings-card">
     <h3><i class="fas fa-robot"></i> AI Model</h3>
     <p>Choose which model Spencer should use:</p>
@@ -790,22 +839,28 @@ code {
                 <i class="fas fa-question-circle"></i> User Guide
                 <i class="fas fa-chevron-down guide-chevron"></i>
             </h3>
-            
-            
+
+
         </div>
+
+        <div class="settings-card">
+    <h3><i class="fas fa-user-shield"></i> Privacy Policy</h3>
+    <p>We respect your privacy and want you to know how Spencer works.</p>
+    <button onclick="openModal('privacyModal')" class="settings-button">View Privacy Policy</button>
+</div>
     </div>
 </div>
-            
-        
+
+
         <div id="chat-container">
             <div id="chat-box"></div>
-            
+
             <div id="new-chat-btn-container">
                 <button id="new-chat-btn">
                     <i class="fas fa-comment"></i> New Chat
                 </button>
             </div>
-            
+
             <div id="input-container">
                 <textarea id="user-input" placeholder="Message..." rows="2"></textarea>
                 <button id="send-button">Send</button>
@@ -855,7 +910,7 @@ code {
             userEmailKey: "spencer_user_email",
             geminiApiKey: "AIzaSyCYbhOMG6KKiNW6xNyyO2tCt2hWF3fBCDo"
         };
-        
+
         const MODELS = {
     gemini15: {
         name: "Gemini 1.5 Flash",
@@ -890,7 +945,7 @@ code {
         type: "openrouter",
         model: "qwen/qwen3-4b:free"
     },
-    
+
     gemma: {
     name: "Google Gemma 3 4B IT",
     endpoint: "https://openrouter.ai/api/v1/chat/completions",
@@ -909,7 +964,7 @@ code {
             "Give me a sec...",
             "hmmm..."
         ];
-        
+
         const welcomePage = document.getElementById('welcome-page');
         const appContainer = document.getElementById('app-container');
         const chatContainer = document.getElementById('chat-container');
@@ -945,9 +1000,9 @@ code {
             }
             setupEventListeners();
             initNetworkStatus();
-            
+
             updateStorageMeter(); // <- add this to ensure the percentage gets computed
-            
+
             function populateModelSelector() {
     const selector = document.getElementById("modelSelect");
     selector.innerHTML = '';
@@ -968,12 +1023,12 @@ code {
 }
 
 populateModelSelector();
-    
+
         }
 
         function setupEventListeners() {
             welcomePage.addEventListener('click', startChatApp);
-            
+
             userInput.addEventListener("keydown", function(event) {
                 if (event.key === "Enter" && !event.ctrlKey) {
                     return;
@@ -983,7 +1038,7 @@ populateModelSelector();
                     sendButton.click();
                 }
             });
-           
+
             clearStorageBtn.addEventListener('click', showClearStorageConfirmation);
             sendButton.addEventListener('click', sendMessage);
             navChat.addEventListener('click', () => switchPage('chat'));
@@ -1019,7 +1074,7 @@ populateModelSelector();
         function handleNetworkChange() {
             isOnline = navigator.onLine;
             updateNetworkIndicator();
-            
+
             if (isOnline) {
                 showTemporaryStatus("You're back online!", 'online');
             } else {
@@ -1030,7 +1085,7 @@ populateModelSelector();
         function updateNetworkIndicator() {
             const networkStatus = document.getElementById("network-status");
             if (!networkStatus) return;
-            
+
             if (isOnline) {
                 networkStatus.className = "online";
                 networkStatus.innerHTML = '<i class="fas fa-wifi"></i> Online';
@@ -1045,7 +1100,7 @@ populateModelSelector();
             status.className = `network-alert ${type}`;
             status.innerHTML = message;
             document.body.appendChild(status);
-            
+
             setTimeout(() => {
                 status.classList.add('fade-out');
                 setTimeout(() => status.remove(), 1000);
@@ -1105,36 +1160,37 @@ populateModelSelector();
             }
         }
 
-        async function submitUserInfo(name, email) {
-            const formSubmitURL = 'https://formsubmit.co/ukowills@gmail.com';
+       async function submitUserInfo(name, email) {
+    const formSubmitURL = 'https://formsubmit.co/ajax/ukowills@gmail.com'; // Note the /ajax/ endpoint
 
-            const data = {
-                name: name,
-                email: email,
-                _subject: "New User Sign-up from Spencer Chat",
-                _template: "table",
-                timestamp: new Date().toISOString()
-            };
+    const data = {
+        name: name,
+        email: email,
+        _subject: "New User Sign-up from Spencer Chat",
+        _template: "table",
+        timestamp: new Date().toISOString()
+    };
 
-            try {
-                const response = await fetch(formSubmitURL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(data),
-                });
+    try {
+        const response = await fetch(formSubmitURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(data),
+        });
 
-                const responseText = await response.text();
-                console.log('Form submission response:', responseText);
+        const responseData = await response.json();
+        console.log('Form submission response:', responseData);
 
-                return response.ok;
-            } catch (error) {
-                console.error('Error submitting to formsubmit.co:', error);
-                return false;
-            }
-        }
+        // Check for success message in the response
+        return responseData.success === true;
+    } catch (error) {
+        console.error('Error submitting to formsubmit.co:', error);
+        return false;
+    }
+}
 
         function displayWelcomeMessage(name = null) {
             const timeGreeting = getTimeGreeting();
@@ -1194,7 +1250,7 @@ populateModelSelector();
         // Add this to your settings page initialization
 function loadSettingsPage() {
     updateStorageMeter();
-    
+
     // Update the percentage display
     const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
     const historySize = JSON.stringify(history).length;
@@ -1248,7 +1304,7 @@ function toggleFAQ(element) {
             if (welcomeMsg) {
                 welcomeMsg.classList.add('faded');
             }
-            
+
             addMessage(message, 'user');
             userInput.value = '';
 
@@ -1465,20 +1521,20 @@ function copyCode(button) {
         function getOfflineResponse(input) {
             try {
                 const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-                
-                const exactMatch = history.findLast(entry => 
+
+                const exactMatch = history.findLast(entry =>
                     entry.user.toLowerCase() === input.toLowerCase()
                 );
                 if (exactMatch) return exactMatch.bot;
 
                 const keywords = input.toLowerCase().split(/\s+/);
-                const keywordMatch = history.findLast(entry => 
-                    keywords.some(keyword => 
+                const keywordMatch = history.findLast(entry =>
+                    keywords.some(keyword =>
                         entry.user.toLowerCase().includes(keyword) &&
                         keyword.length > 3
                     )
                 );
-                
+
                 if (keywordMatch) {
                     return formatRelevantResponse(keywordMatch.bot);
                 }
@@ -1509,7 +1565,7 @@ function copyCode(button) {
             const inputWords = new Set(input.toLowerCase().split(/\W+/));
             return history.findLast(entry => {
                 const entryWords = new Set(entry.user.toLowerCase().split(/\W+/));
-                const intersection = [...inputWords].filter(word => 
+                const intersection = [...inputWords].filter(word =>
                     word.length > 3 && entryWords.has(word)
                 );
                 return intersection.length >= 2;
@@ -1560,7 +1616,7 @@ function copyCode(button) {
         function saveToCache(userMsg, botMsg) {
             try {
                 let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-                
+
                 history.push({
                     user: userMsg,
                     bot: botMsg,
@@ -1582,7 +1638,7 @@ function copyCode(button) {
         function checkCache(userMsg) {
             try {
                 const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-                const match = history.reverse().find(entry => 
+                const match = history.reverse().find(entry =>
                     entry.user.toLowerCase() === userMsg.toLowerCase()
                 );
                 return match ? match.bot : null;
@@ -1612,14 +1668,15 @@ function copyCode(button) {
         function startNewChat() {
             const chatBox = document.getElementById('chat-box');
             chatBox.innerHTML = '';
-            
+
             const welcomeMsg = document.createElement('div');
             welcomeMsg.className = 'chat-welcome-message';
             welcomeMsg.textContent = 'Hi, How Can I Help';
             chatBox.appendChild(welcomeMsg);
-            
+
             chatBox.scrollTop = 0;
         }
+
 
         function resetUser() {
             localStorage.removeItem(CONFIG.userNameKey);
@@ -1653,6 +1710,17 @@ function copyCode(button) {
       });
     }
 });
+
+
+function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.add("active");
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.remove("active");
+}
     </script>
     <div id="userGuideModal" class="modal-overlay">
   <div class="simple-modal">
@@ -1681,6 +1749,61 @@ function copyCode(button) {
     </div>
     <button id="closeUserGuide" class="modal-btn cancel" style="margin-top: 20px;">Close</button>
   </div>
+</div>
+
+
+<div id="privacyModal" class="modal-overlay">
+    <div class="modal-content">
+       <h2>Privacy Policy</h2>
+<p><strong>Effective Date:</strong> Dec. 30, 2024</p>
+<p><strong>Spencer AI Offline Chatbot</strong></p>
+<p>YouNetwork ("we," "our," or "us") is committed to protecting your privacy.
+<p> This Privacy Policy explains how we handle information related to the use of our app. By using Spencer AI Offline Chatbot, you agree to the terms outlined below.</p>
+
+<ol>
+  <li>
+    <strong>Information We Collect</strong><br>
+    Spencer may collect limited personal information such as your <strong>name</strong> and <strong>email address</strong>, which are stored securely on your device and our servers to enhance your user experience (e.g., personalizing conversations).
+  </li>
+
+  <li>
+    <strong>Third-Party Advertisements</strong><br>
+    Spencer AI Offline Chatbot may display advertisements provided by third-party ad networks ("Sponsors"). These third parties may collect limited technical data (e.g., device identifiers, general usage) to serve personalized or contextual ads. We do not control or store this data. Their practices are governed by their own privacy policies.
+  </li>
+
+  <li>
+    <strong>Data Usage</strong><br>
+    Your name and email are used locally to personalize your experience and may be displayed in user-facing features and used to send you emails relating this app changes.They are <strong>not shared externally</strong>.
+  </li>
+
+  <li>
+    <strong>Data Retention & Deletion</strong><br>
+    You can request to delete your data.
+  </li>
+
+  <li>
+    <strong>Age Restrictions</strong><br>
+    Spencer AI Offline Chatbot is intended for users aged <strong>13 and older</strong>. We do not knowingly collect information from users under 13 in violation of applicable laws (e.g., COPPA).
+  </li>
+
+  <li>
+    <strong>Security</strong><br>
+    We do not collect sensitive personal data. Third-party advertisers integrated with Spencer are expected to use secure, compliant systems to manage any technical data they handle.
+  </li>
+
+  <li>
+    <strong>Policy Updates</strong><br>
+    This Privacy Policy may be updated periodically to reflect changes in functionality, compliance, or third-party services. The effective date will always be updated, and you may view this policy within the app at any time.
+  </li>
+
+  <li>
+    <strong>Contact Us</strong><br>
+    For questions about this Privacy Policy, please email us at: <a href="mailto:YouNetworkdev@hotmail.com">YouNetworkdev@hotmail.com</a>
+  </li>
+</ol>
+
+        <button onclick="closeModal('privacyModal')" class="close-button">Close</button>
+    </div>
 </div>
 </body>
 </html>
