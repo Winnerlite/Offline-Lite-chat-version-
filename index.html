@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spencer Chat</title>
     <style>
-        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -19,9 +19,17 @@
             color: white;
             height: 100vh;
             overflow: hidden;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
-        /* Welcome Page Styles */
+        input, textarea {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+
         #welcome-page {
             height: 100%;
             display: flex;
@@ -61,14 +69,12 @@
             color: #FFA500;
         }
 
-        /* Main App Container (hidden initially) */
         #app-container {
             display: none;
             height: 100%;
             flex-direction: column;
         }
 
-        /* Chat Container */
         #chat-container {
             flex: 1;
             display: flex;
@@ -76,16 +82,15 @@
             overflow: hidden;
         }
 
-       #chat-box {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    background-color: #000;
-    /* Add these new properties */
-    padding-bottom: 60px; /* Extra space at bottom */
-    scroll-behavior: smooth; /* Smooth scrolling */
-    scroll-padding-bottom: 100px; /* Keep space above input */
-}
+        #chat-box {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #000;
+            padding-bottom: 60px;
+            scroll-behavior: smooth;
+            scroll-padding-bottom: 100px;
+        }
 
         .message {
             margin: 15px;
@@ -108,6 +113,7 @@
             position: relative;
             opacity: 0;
             animation: fadeIn 0.5s ease-in-out forwards;
+            padding-right: 40px;
         }
 
         .typing {
@@ -138,7 +144,6 @@
             animation-delay: 0.4s;
         }
 
-        /* Input Area */
         #input-container {
             display: flex;
             padding: 10px;
@@ -167,79 +172,6 @@
             font-weight: bold;
         }
 
-        /* History Page */
-        #history-page {
-            display: none;
-            height: 100%;
-            overflow-y: auto;
-            padding: 20px;
-            background: #121212;
-        }
-
-        .history-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .history-card {
-            background: #1e1e1e;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            border: 1px solid #333;
-        }
-
-        .card-header {
-            padding: 1.2rem;
-            background: #252525;
-            border-bottom: 1px solid #333;
-        }
-
-        .card-header h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.3rem;
-            color: #ffffff;
-        }
-
-        .card-header .date {
-            font-size: 0.85rem;
-            color: #aaa;
-        }
-
-        /* Update your existing .card-content styles */
-.card-content {
-    padding: 0.5rem;
-    max-height: 300px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #FFA500 #252525;
-}
-
-/* Custom scrollbar for WebKit browsers */
-.card-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.card-content::-webkit-scrollbar-track {
-    background: #252525;
-}
-
-.card-content::-webkit-scrollbar-thumb {
-    background-color: #FFA500;
-    border-radius: 3px;
-}
-
-/* Ensure continue button stays visible */
-.continue-chat-btn {
-    position: sticky;
-    bottom: 0;
-    background: #252525;
-    z-index: 1;
-    margin-top: 10px;
-}
-        /* Bottom Navigation */
         .bottom-nav {
             display: flex;
             background: #1e1e1e;
@@ -263,7 +195,6 @@
             margin-bottom: 5px;
         }
 
-        /* Name Modal */
         #nameModal {
             position: fixed;
             top: 50%;
@@ -274,35 +205,31 @@
             background-color: #1e1e1e;
             border-radius: 12px;
             padding: 20px;
-            display: none; /* Initially hidden */
+            display: none;
             z-index: 1000;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
 
-        #nameModal .modal-content h2 { /* Added for better structure if needed */
-            margin-bottom: 15px;
-        }
-
-        #nameInput, #emailInput { /* Applied styles to both */
+        #nameInput, #emailInput {
             width: 100%;
             padding: 12px;
             font-size: 1rem;
             border: 1px solid #555;
-            border-radius: 90px; /* This seems like a large radius, kept as is */
+            border-radius: 90px;
             margin-bottom: 15px;
             background-color: #2c2c2c;
             color: white;
-            outline: none; /* Added for consistency */
+            outline: none;
         }
 
         .button-group {
             display: flex;
             justify-content: space-between;
-            gap: 10px; /* Added gap for better spacing */
+            gap: 10px;
         }
 
-        #skipButton, #saveButton {
+        #saveButton {
             flex: 1;
             padding: 12px;
             font-size: 1rem;
@@ -310,19 +237,10 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
-        }
-
-        #saveButton {
             background-color: #00b894;
             color: white;
         }
 
-        #skipButton {
-            background-color: #d63031;
-            color: white;
-        }
-
-        /* Animations */
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
@@ -333,640 +251,566 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Responsive */
+        .copy-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message.bot:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .copy-btn i {
+            font-size: 12px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .simple-modal {
+            background: #252525;
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid #444;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.confirm {
+            background: #d63031;
+            color: white;
+        }
+
+        .modal-btn.cancel {
+            background: #333;
+            color: white;
+        }
+
+        .thinking-mode {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: #252525;
+            border-radius: 15px;
+            margin: 10px 15px;
+            max-width: 80%;
+            align-self: flex-start;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .thinking-text {
+            font-size: 14px;
+            color: #aaa;
+            margin-right: 8px;
+        }
+
+        .thinking-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .thinking-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #FFA500;
+            opacity: 0.4;
+            animation: thinking-pulse 1.5s infinite ease-in-out;
+        }
+
+        .thinking-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .thinking-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes thinking-pulse {
+            0%, 100% {
+                opacity: 0.4;
+                transform: scale(0.9);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+
+        .chat-welcome-message {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #FFA500;
+    font-family: 'Montserrat', 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    opacity: 0.9;
+    pointer-events: none;
+    transition: all 0.3s ease-in-out;
+    z-index: 1;
+    width: 90%;
+    max-width: 600px;
+    padding: 20px;
+    line-height: 1.3;
+}
+
+        .chat-welcome-message.faded {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #network-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #network-status.online {
+            background-color: #00c853;
+            color: white;
+            animation: pulseOnline 2s infinite;
+        }
+
+        #network-status.offline {
+            background-color: #d50000;
+            color: white;
+            animation: pulseOffline 2s infinite;
+        }
+
+        @keyframes pulseOnline {
+            0% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 200, 83, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0); }
+        }
+
+        @keyframes pulseOffline {
+            0% { box-shadow: 0 0 0 0 rgba(213, 0, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(213, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(213, 0, 0, 0); }
+        }
+
+        #new-chat-btn-container {
+            position: fixed;
+            bottom: 200px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            z-index: 999;
+            padding: 0 20px;
+        }
+
+        #new-chat-btn {
+            background: #1a1a1a;
+            color: white;
+            border: 1px solid #333;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        #new-chat-btn:hover {
+            background: #252525;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .message.bot .chat-link {
+            color: #FFA500;
+            text-decoration: underline;
+            word-break: break-all;
+            transition: all 0.2s ease;
+        }
+
+        .message.bot .chat-link:hover {
+            color: #FF8C00;
+            text-decoration: none;
+        }
+
+        #settings-page {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+            padding: 20px;
+            background: #121212;
+        }
+
+        .settings-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .settings-container h2 {
+            color: #FFA500;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .storage-meter-container {
+            margin-bottom: 30px;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+
+        .storage-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .storage-meter {
+            height: 10px;
+            background: #252525;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .storage-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #FFA500, #FF4500);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .action-btn {
+            background: linear-gradient(45deg, #d63031, #ff7675);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(214, 48, 49, 0.3);
+        }
+
         @media (max-width: 768px) {
             .text-container {
                 font-size: 2rem;
             }
 
-            .history-grid {
-                grid-template-columns: 1fr;
+            .copy-btn {
+                opacity: 1 !important;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 12px;
             }
         }
-
-        /* Disable text selection highlighting */
-body {
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    user-select: none; /* Standard syntax */
+        
+        /* Storage Description Text */
+.storage-description {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 1.1rem;
+    color: #FFA500;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255,165,0,0.3);
+    padding: 0 15px;
+    line-height: 1.5;
 }
 
-/* Optional: Allow selection in input fields */
-input, textarea {
-    -webkit-user-select: text !important;
-    user-select: text !important;
+/* User Guide Section */
+.user-guide-section {
+    margin-top: 30px;
+    border-top: 1px solid #333;
+    padding-top: 20px;
 }
 
-/* ===== COPY BUTTON STYLES ===== */
-.message.bot {
+.guide-header {
+    color: #FFA500;
+    text-align: center;
+    margin-bottom: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.guide-chevron {
+    margin-left: 8px;
+    transition: transform 0.3s;
+}
+
+
+
+//For Modal 
+#userGuideModal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#userGuideModal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+//For The Ai model card
+.settings-card {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #333;
+    color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.settings-card h3 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #FFA500;
+}
+
+.settings-card p {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: #ccc;
+}
+
+#modelSelect {
+    background-color: #2c2c2c;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+    width: 100%;
+    transition: border 0.3s, background-color 0.3s;
+}
+
+#modelSelect:focus {
+    outline: none;
+    border-color: #FFA500;
+    background-color: #1f1f1f;
+}
+
+pre {
+    background: #111;
+    color: #00FFAA;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    overflow-x: auto;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+code {
+    background: #222;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    color: #FFA500;
+}
+
+.code-block {
     position: relative;
-    padding-right: 40px; /* Make space for button */
+    margin-top: 1em;
 }
 
 .copy-btn {
     position: absolute;
-    right: 10px;
     top: 10px;
-    background: #333;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    width: 25px;
-    height: 25px;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.message.bot:hover .copy-btn {
-    opacity: 1;
-}
-
-.copy-btn i {
-    font-size: 12px;
-}
-
-/* Mobile always show */
-@media (max-width: 768px) {
-    .copy-btn {
-        opacity: 1 !important;
-    }
-}
-
-/* ===== SIMPLE MODAL STYLES ===== */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-}
-
-.modal-overlay.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.simple-modal {
-    background: #252525;
-    border-radius: 10px;
-    padding: 20px;
-    width: 90%;
-    max-width: 400px;
-    border: 1px solid #444;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-
-.modal-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.modal-btn {
-    flex: 1;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.2s;
-}
-
-.modal-btn.confirm {
-    background: #d63031;
-    color: white;
-}
-
-.modal-btn.cancel {
-    background: #333;
-    color: white;
-}
-
-.modal-btn:hover {
-    transform: translateY(-2px);
-}
-
-
-/* Clear History Button Styles */
-.action-btn {
-    background: linear-gradient(45deg, #d63031, #ff7675);
-    color: white;
-    border: none;
-    border-radius: 25px;
-    padding: 10px 20px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s;
-    box-shadow: 0 2px 10px rgba(214, 48, 49, 0.3);
-}
-
-.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(214, 48, 49, 0.4);
-}
-
-.action-btn:active {
-    transform: translateY(0);
-}
-
-/* Adjust the actions container */
-.actions {
-    margin: 20px 0;
-    display: flex;
-    justify-content: flex-end;
-}
-
-@media (max-width: 768px) {
-    .action-btn {
-        width: 100%;
-        justify-content: center;
-        padding: 12px;
-    }
-
-    .actions {
-        padding: 0 10px;
-    }
-}
-
-/* Remove tap highlights on all elements */
-* {
-    -webkit-tap-highlight-color: transparent;
-}
-
-/* Specifically for your Clear History button */
-.action-btn {
-    -webkit-tap-highlight-color: transparent;
-    tap-highlight-color: transparent;
-}
-
-/* Remove mobile highlight effects */
-.action-btn {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    outline: none;
-}
-
-/* History Card Styles */
-.history-card {
-    background: #1e1e1e;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    border: 1px solid #333;
-}
-
-.card-header {
-    padding: 1rem;
-    background: #252525;
-    border-bottom: 1px solid #333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.card-header h3 {
-    margin: 0;
-    font-size: 1rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 70%;
-}
-
-.card-header .date {
-    color: #aaa;
-    font-size: 0.8rem;
-}
-
-.card-content {
-    padding: 0.5rem;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-.conversation-item {
-    margin-bottom: 1rem;
-    padding: 0.5rem;
-    border-bottom: 1px solid #2a2a2a;
-}
-
-.conversation-item:last-child {
-    border-bottom: none;
-}
-
-.time-stamp {
-    color: #FFA500;
-    font-size: 0.7rem;
-    margin-bottom: 0.3rem;
-}
-
-/* Make messages more compact in history view */
-.card-content .message {
-    margin: 0.3rem 0;
-    padding: 0.5rem;
-    max-width: 100%;
-    font-size: 0.9rem;
-}
-
-.card-content .user {
-    margin-left: 0;
-}
-
-.card-content .bot {
-    margin-right: 0;
-}
-
-.history-card:not(.expanded) .card-content {
-    display: none;
-}
-
-.history-card.expanded .card-content {
-    display: block;
-}
-
-/* History Card Dropdown Styles */
-.card-header {
-    position: relative;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.card-header:hover {
-    background: #2e2e2e;
-}
-
-.toggle-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: transform 0.2s;
-    font-size: 0.9rem;
-    color: #aaa;
-}
-
-.history-card.expanded .toggle-icon {
-    transform: translateY(-50%) rotate(180deg);
-}
-
-.continue-chat-btn {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    background: linear-gradient(45deg, #4CAF50, #45A049);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s;
-}
-
-.continue-chat-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
-}
-
-.continue-chat-btn:active {
-    transform: translateY(0);
-}
-
-/* Animation for dropdown */
-.card-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-    padding: 0 1.2rem;
-}
-
-.history-card.expanded .card-content {
-    max-height: 500px;
-    padding: 1.2rem;
-}
-
-/* Thinking Mode Styles - UPDATED */
-.thinking-mode {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 15px;
-    background: #252525;
-    border-radius: 15px;
-    margin: 10px 15px;
-    max-width: 80%;
-    align-self: flex-start;
-    animation: fadeIn 0.3s ease-out;
-}
-
-.thinking-text {
-    font-size: 14px;
-    color: #aaa;
-    margin-right: 8px;
-}
-
-.thinking-dots {
-    display: flex;
-    gap: 5px;
-}
-
-.thinking-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    right: 10px;
     background: #FFA500;
-    opacity: 0.4;
-    animation: thinking-pulse 1.5s infinite ease-in-out;
-}
-
-.thinking-dot:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.thinking-dot:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
-/* Add this with your other keyframes */
-@keyframes thinking-pulse {
-    0%, 100% {
-        opacity: 0.4;
-        transform: scale(0.9);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-}
-
-/* Add to your existing styles */
-/* Welcome Message Styling with Fade Effect */
-/* Welcome Message Styling with Fade Effect */
-/* Welcome Message Styling */
-.chat-welcome-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: #FFA500;
-    font-family: 'Montserrat', 'Poppins', sans-serif; /* More modern font stack */
-    font-size: 2rem; /* Larger size */
-    font-weight: 700; /* Bold weight */
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
-    opacity: 0.9; /* More visible */
-    pointer-events: none;
-    transition: all 0.3s ease-in-out;
-    z-index: 1;
-    width: 90%; /* Better text containment */
-    max-width: 600px; /* Prevents overly wide text on large screens */
-    padding: 20px;
-    line-height: 1.3;
-}
-
-/* Faded state */
-.chat-welcome-message.faded {
-    opacity: 0;
-    visibility: hidden;
-}
-
-/* Add this to your head section if not already present */
-
-/* Completely hidden when chat has messages */
-.chat-welcome-message.faded {
-    opacity: 0; /* Fully transparent */
-    visibility: hidden; /* Also removes from layout */
-    transition: opacity 0.3s ease-in-out, visibility 0.3s;
-}
-
-
-
-/* Network Status Indicator */
-#network-status {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    z-index: 1000;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-#network-status.online {
-    background-color: #00c853;
-    color: white;
-    animation: pulseOnline 2s infinite;
-}
-
-#network-status.offline {
-    background-color: #d50000;
-    color: white;
-    animation: pulseOffline 2s infinite;
-}
-
-/* Optional: Status alert animation */
-.network-alert {
-    position: fixed;
-    top: 50px;
-    right: 20px;
-    padding: 10px 15px;
-    border-radius: 5px;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    transition: all 0.5s ease;
-}
-
-.network-alert.online {
-    background: #00c853;
-    color: white;
-}
-
-.network-alert.offline {
-    background: #d50000;
-    color: white;
-}
-
-.fade-out {
-    opacity: 0;
-    transform: translateY(-20px);
-}
-
-@keyframes pulseOnline {
-    0% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(0, 200, 83, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0); }
-}
-
-@keyframes pulseOffline {
-    0% { box-shadow: 0 0 0 0 rgba(213, 0, 0, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(213, 0, 0, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(213, 0, 0, 0); }
-}
-
-
-/* Base Responsive Styles coming back to evaluate this*/
-html {
-    font-size: 16px;
-    -webkit-text-size-adjust: 100%;
-}
-
-body {
-    min-height: 100vh;
-    max-width: 100vw;
-    overflow-x: hidden;
-}
-
-/* Make all elements border-box */
-*, *::before, *::after {
-    box-sizing: border-box;
-}
-
-/* Responsive Typography */
-@media (max-width: 768px) {
-    html {
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    html {
-        font-size: 13px;
-    }
-}
-
-/* New Chat Button Container */
-#new-chat-btn-container {
-    position: fixed;
-    bottom: 180px; /* Positioned above input container */
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    z-index: 999;
-    padding: 0 20px;
-}
-
-/* New Chat Button Styling */
-#new-chat-btn {
-    background: #1a1a1a;
-    color: white;
-    border: 1px solid #333;
-    border-radius: 25px;
-    padding: 10px 25px;
-    font-weight: bold;
+    color: black;
+    border: none;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    border-radius: 4px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    transition: background 0.3s ease;
+    z-index: 2;
 }
 
-#new-chat-btn:hover {
-    background: #252525;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+.copy-btn:hover {
+    background: #ff8000;
 }
 
-#new-chat-btn:active {
-    transform: translateY(0);
-    background: #1a1a1a;
+pre {
+    background: #111;
+    color: #00FFAA;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    overflow-x: auto;
+    font-size: 0.9rem;
+    line-height: 1.5;
 }
 
-
-    /* Chat Link Styling */
-.message.bot .chat-link {
-    color: #FFA500;
-    text-decoration: underline;
-    word-break: break-all;
-    transition: all 0.2s ease;
-}
-
-.message.bot .chat-link:hover {
-    color: #FF8C00;
-    text-decoration: none;
-}
-
-/* Make sure links are visible in dark mode */
-.message.bot a:visited {
+code {
+    background: #222;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
     color: #FFA500;
 }
 
-    </style>
+.bot-message, .bot-message * {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  cursor: text;
+}
+
+
+   </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <div id="welcome-page">
         <div class="text-container">
             <div id="animatedText" class="fade-text"></div>
-
         </div>
     </div>
 
-
-    <!-- Add this button anywhere in your app-container -->
-<button id="reset-user" style="position: fixed; bottom: 70px; right: 10px; z-index: 1000; padding: 8px 12px; background: #ff4444; color: white; border: none; border-radius: 5px; cursor: pointer;">
-    Reset User
-</button>
-
+    <button id="reset-user" style="position: fixed; bottom: 70px; right: 10px; z-index: 1000; padding: 8px 12px; background: #ff4444; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Reset User
+    </button>
 
     <div id="app-container">
+        <div id="settings-page">
+            <div class="settings-container">
+                <h2>Storage Settings</h2>
+                <div class="storage-meter-container">
+                    <div class="storage-info">
+                        <span id="storage-used">0 KB</span> used of <span id="storage-total">5 MB</span>
+                    </div>
+                    <div class="storage-meter">
+                        <div id="storage-progress" class="storage-progress"></div>
+                        
+                    </div>
+                </div>
+                
+                <!-- ADD THIS NEW STORAGE DESCRIPTION TEXT -->
+        <p class="storage-description">
+            🔋 Your AI companion has stored <span id="storage-percentage">0%</span> of knowledge locally 
+            for instant offline access!
+        </p>
+        
+                <button id="clear-storage-btn" class="action-btn">
+                    <i class="fas fa-trash-alt"></i> Clear All Chat Data
+                </button>
+                
+                <div class="settings-card">
+    <h3><i class="fas fa-robot"></i> AI Model</h3>
+    <p>Choose which model Spencer should use:</p>
+    <select id="modelSelect" style="margin-top:10px; width:100%; padding:10px; border-radius:8px;">
+    </select>
+</div>
+
+                <!-- User Guide Section -->
+        <div class="user-guide-section">
+            <h3 class="guide-header" id="openUserGuide">
+                <i class="fas fa-question-circle"></i> User Guide
+                <i class="fas fa-chevron-down guide-chevron"></i>
+            </h3>
+            
+            
+        </div>
+    </div>
+</div>
+            
+        
         <div id="chat-container">
             <div id="chat-box"></div>
             
-             <!-- Independent New Chat Button -->
-    <div id="new-chat-btn-container">
-        <button id="new-chat-btn">
-            <i class="fas fa-comment"></i> New Chat
-        </button>
-    </div>
+            <div id="new-chat-btn-container">
+                <button id="new-chat-btn">
+                    <i class="fas fa-comment"></i> New Chat
+                </button>
+            </div>
+            
             <div id="input-container">
                 <textarea id="user-input" placeholder="Message..." rows="2"></textarea>
-<button id="send-button">Send</button>
+                <button id="send-button">Send</button>
             </div>
             <div id="network-status" class="offline">Offline</div>
-        </div>
-
-        <div id="history-page">
-
-            <div class="actions">
-                <button id="clear-history" class="action-btn">
-    <i class="fas fa-trash-alt"></i> Clear History
-</button>
-            </div>
-            <div id="history-container"></div>
-            <div id="empty-state" class="empty-state" style="display: none;">
-
-                <h2>No Chat History</h2>
-                <p>Your conversation history will appear here</p>
-            </div>
         </div>
 
         <div class="bottom-nav">
@@ -974,9 +818,9 @@ body {
                 <i class="fas fa-comment-alt"></i>
                 <div>Chat</div>
             </div>
-            <div class="nav-item" id="nav-history">
-                <i class="fas fa-history"></i>
-                <div>History</div>
+            <div class="nav-item" id="nav-settings">
+                <i class="fas fa-cog"></i>
+                <div>Settings</div>
             </div>
         </div>
     </div>
@@ -987,239 +831,226 @@ body {
             <input type="text" id="nameInput" placeholder="Enter your name here">
             <input type="email" id="emailInput" placeholder="Enter your email here">
             <div class="button-group">
-
                 <button id="saveButton">Save</button>
             </div>
         </div>
     </div>
 
+    <div class="modal-overlay" id="confirmModal">
+        <div class="simple-modal">
+            <h3>Clear All History?</h3>
+            <p>This will permanently delete all your chat history.</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="cancelClear">Cancel</button>
+                <button class="modal-btn confirm" id="confirmClear">Clear</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-         
-         document.getElementById('new-chat-btn').addEventListener('click', function() {
-    // Clear the chat box
-    const chatBox = document.getElementById('chat-box');
-    chatBox.innerHTML = '';
-    
-    // Add welcome message with your custom text
-    const welcomeMsg = document.createElement('div');
-    welcomeMsg.className = 'chat-welcome-message';
-    welcomeMsg.textContent = 'Hi, How Can I Help';
-    chatBox.appendChild(welcomeMsg);
-    
-    // Scroll to top
-    chatBox.scrollTop = 0;
-    
-    
-    // Scroll to top
-    document.getElementById('chat-box').scrollTop = 0;
-    
-    // Optional visual feedback
-    this.classList.add('clicked');
-    setTimeout(() => {
-        this.classList.remove('clicked');
-    }, 300);
-});
-
-    // Add this to your existing JavaScript
-document.getElementById('reset-user').addEventListener('click', function() {
-    // Clear user data from localStorage
-    localStorage.removeItem(CONFIG.userNameKey);
-    localStorage.removeItem(CONFIG.userEmailKey);
-
-    // Show welcome page again
-    appContainer.style.display = 'none';
-    welcomePage.style.display = 'flex';
-
-    // Reset the animated text
-    displayWelcomeMessage();
-
-    alert("User data cleared. Welcome page will show again.");
-});
-
         // Configuration
         const CONFIG = {
             chatHistoryKey: "spencer_chat_history",
             userNameKey: "spencer_user_name",
-            userEmailKey: "spencer_user_email", // <-- ADDED EMAIL KEY
-
-            geminiApiKey: "AIzaSyCYbhOMG6KKiNW6xNyyO2tCt2hWF3fBCDo" // Gemini API Key
-
+            userEmailKey: "spencer_user_email",
+            geminiApiKey: "AIzaSyCYbhOMG6KKiNW6xNyyO2tCt2hWF3fBCDo"
         };
+        
+        const MODELS = {
+    gemini15: {
+        name: "Gemini 1.5 Flash",
+        endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+        apiKey: CONFIG.geminiApiKey,
+        type: "gemini"
+    },
+    gemini20: {
+        name: "Gemini 2.0 Flash",
+        endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        apiKey: CONFIG.geminiApiKey,
+        type: "gemini"
+    },
+    deepseek: {
+        name: "Deepseek Prover V2",
+        endpoint: "https://openrouter.ai/api/v1/chat/completions",
+        apiKey: "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",
+        type: "openrouter",
+        model: "deepseek/deepseek-prover-v2:free"
+    },
+    meta_llama: {
+        name: "Meta LLaMA 3.3 8B Instruct",
+        endpoint: "https://openrouter.ai/api/v1/chat/completions",
+        apiKey: "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",
+        type: "openrouter",
+        model: "meta-llama/llama-3.3-8b-instruct:free"
+    },
+    qwen: {
+        name: "Qwen 3 4B",
+        endpoint: "https://openrouter.ai/api/v1/chat/completions",
+        apiKey: "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",
+        type: "openrouter",
+        model: "qwen/qwen3-4b:free"
+    },
+    
+    gemma: {
+    name: "Google Gemma 3 4B IT",
+    endpoint: "https://openrouter.ai/api/v1/chat/completions",
+    apiKey: "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",
+    type: "openrouter",
+    model: "google/gemma-3-4b-it:free"
+}
 
+};
         // DOM Elements
-
-        // Add this with your other DOM elements
-const THINKING_MESSAGES = [
-    "Processing your request...",
-    "Thinking carefully...",
-    "Generating response...",
-    "Working on it...",
-     "Give me a sec...",
-      "hmmm..."
-];
+        const THINKING_MESSAGES = [
+            "Processing your request...",
+            "Thinking carefully...",
+            "Generating response...",
+            "Working on it...",
+            "Give me a sec...",
+            "hmmm..."
+        ];
+        
         const welcomePage = document.getElementById('welcome-page');
         const appContainer = document.getElementById('app-container');
         const chatContainer = document.getElementById('chat-container');
-        const historyPage = document.getElementById('history-page');
         const chatBox = document.getElementById('chat-box');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
         const navChat = document.getElementById('nav-chat');
-        const navHistory = document.getElementById('nav-history');
-        const historyContainer = document.getElementById('history-container');
-        const emptyState = document.getElementById('empty-state');
-        const clearHistoryBtn = document.getElementById('clear-history');
+        const navSettings = document.getElementById('nav-settings');
         const nameModal = document.getElementById('nameModal');
-
-        // Online/Offline state
-// Network Status Detection
-let isOnline = navigator.onLine;
-
-function initNetworkStatus() {
-    // Update immediately on load
-    updateNetworkIndicator();
-    
-    // Set up event listeners
-    window.addEventListener('online', handleNetworkChange);
-    window.addEventListener('offline', handleNetworkChange);
-}
-
-function handleNetworkChange() {
-    isOnline = navigator.onLine;
-    updateNetworkIndicator();
-    
-    // Optional: Notify user of status change
-    if (isOnline) {
-        showTemporaryStatus("You're back online!", 'online');
-    } else {
-        showTemporaryStatus("You've gone offline", 'offline');
-    }
-}
-
-function updateNetworkIndicator() {
-    const networkStatus = document.getElementById("network-status");
-    if (!networkStatus) return;
-    
-    if (isOnline) {
-        networkStatus.className = "online";
-        networkStatus.innerHTML = '<i class="fas fa-wifi"></i> Online';
-    } else {
-        networkStatus.className = "offline";
-        networkStatus.innerHTML = '<i class="fas fa-plug"></i> Offline';
-    }
-}
-
-// Optional: Temporary status message
-function showTemporaryStatus(message, type) {
-    const status = document.createElement('div');
-    status.className = `network-alert ${type}`;
-    status.innerHTML = message;
-    document.body.appendChild(status);
-    
-    setTimeout(() => {
-        status.classList.add('fade-out');
-        setTimeout(() => status.remove(), 1000);
-    }, 3000);
-}
-
-// Initialize when the app starts
-initNetworkStatus();
-function saveToLocalStorage(userMsg, botMsg) {
-    let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || {};
-    history[userMsg] = botMsg;
-    localStorage.setItem(CONFIG.chatHistoryKey, JSON.stringify(history));
-}
-
-function getFromLocalStorage(userMsg) {
-    let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || {};
-    return history[userMsg];
-}
-
         const nameInput = document.getElementById('nameInput');
-        const emailInput = document.getElementById('emailInput'); // <-- ADDED EMAIL INPUT ELEMENT
+        const emailInput = document.getElementById('emailInput');
         const saveButton = document.getElementById('saveButton');
         const animatedText = document.getElementById('animatedText');
-
+        const settingsPage = document.getElementById('settings-page');
+        const clearStorageBtn = document.getElementById('clear-storage-btn');
+        const storageUsedEl = document.getElementById('storage-used');
+        const storageTotalEl = document.getElementById('storage-total');
+        const storageProgressEl = document.getElementById('storage-progress');
+        const newChatBtn = document.getElementById('new-chat-btn');
+        const resetUserBtn = document.getElementById('reset-user');
 
         // State
         let currentPage = 'chat';
+        let isOnline = navigator.onLine;
 
         // Initialize the app
         function initApp() {
             const savedUsername = localStorage.getItem(CONFIG.userNameKey);
-
-            // const savedEmail = localStorage.getItem(CONFIG.userEmailKey); // We might use this later if needed
-
             if (!savedUsername) {
-    showNameModal();
-}
-             else {
+                showNameModal();
+            } else {
                 displayWelcomeMessage(savedUsername);
             }
             setupEventListeners();
+            initNetworkStatus();
+            
+            updateStorageMeter(); // <- add this to ensure the percentage gets computed
+            
+            function populateModelSelector() {
+    const selector = document.getElementById("modelSelect");
+    selector.innerHTML = '';
+
+    for (const key in MODELS) {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = MODELS[key].name;
+        selector.appendChild(option);
+    }
+
+    const saved = localStorage.getItem("selectedModel") || "gemini15";
+    selector.value = saved;
+
+    selector.addEventListener("change", () => {
+        localStorage.setItem("selectedModel", selector.value);
+    });
+}
+
+populateModelSelector();
+    
         }
 
         function setupEventListeners() {
             welcomePage.addEventListener('click', startChatApp);
             
-document.getElementById("user-input").addEventListener("keydown", function(event) {
-    if (event.key === "Enter" && !event.ctrlKey) {
-        // Allow newline
-        return;
-    }
-    if (event.key === "Enter" && event.ctrlKey) {
-        event.preventDefault();
-        document.getElementById("send-button").click();
-    }
-});
+            userInput.addEventListener("keydown", function(event) {
+                if (event.key === "Enter" && !event.ctrlKey) {
+                    return;
+                }
+                if (event.key === "Enter" && event.ctrlKey) {
+                    event.preventDefault();
+                    sendButton.click();
+                }
+            });
+           
+            clearStorageBtn.addEventListener('click', showClearStorageConfirmation);
             sendButton.addEventListener('click', sendMessage);
             navChat.addEventListener('click', () => switchPage('chat'));
-            navHistory.addEventListener('click', () => switchPage('history'));
-            clearHistoryBtn.addEventListener('click', function(e) {
-    e.preventDefault(); // Prevent default behavior
-    clearHistory(); // Just shows the modal
-});
+            navSettings.addEventListener('click', () => switchPage('settings'));
+            saveButton.addEventListener('click', saveNameAndEmail);
+            resetUserBtn.addEventListener('click', resetUser);
+            newChatBtn.addEventListener('click', startNewChat);
 
-            saveButton.addEventListener('click', saveNameAndEmail); // Renamed for clarity
+            document.getElementById('confirmModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('confirmModal')) {
+                    document.getElementById('confirmModal').classList.remove('active');
+                }
+            });
 
-        clearHistoryBtn.addEventListener('click', clearHistory);
+            document.getElementById('confirmClear').addEventListener('click', () => {
+                localStorage.removeItem(CONFIG.chatHistoryKey);
+                loadChatHistory();
+                document.getElementById('confirmModal').classList.remove('active');
+                updateStorageMeter();
+            });
 
-         // Add modal close when clicking outside
-    document.getElementById('confirmModal').addEventListener('click', (e) => {
-        if (e.target === document.getElementById('confirmModal')) {
-            document.getElementById('confirmModal').classList.remove('active');
-        }
-    });
-
-
-// Add these new event listeners at the end of your setupEventListeners function:
-document.getElementById('confirmClear').addEventListener('click', () => {
-    localStorage.removeItem(CONFIG.chatHistoryKey);
-    loadHistoryView();
-    if (currentPage === 'chat') {
-        chatBox.innerHTML = '';
-    }
-    document.getElementById('confirmModal').classList.remove('active');
-});
-
-document.getElementById('cancelClear').addEventListener('click', () => {
-    document.getElementById('confirmModal').classList.remove('active');
-});
-
-document.getElementById('confirmClear').addEventListener('click', () => {
-    // ACTUAL clearing happens here only after confirmation
-    localStorage.removeItem(CONFIG.chatHistoryKey);
-    loadHistoryView();
-    chatBox.innerHTML = ''; // Clear chat view too
-    document.getElementById('confirmModal').classList.remove('active');
-});
-
+            document.getElementById('cancelClear').addEventListener('click', () => {
+                document.getElementById('confirmModal').classList.remove('active');
+            });
         }
 
+        function initNetworkStatus() {
+            updateNetworkIndicator();
+            window.addEventListener('online', handleNetworkChange);
+            window.addEventListener('offline', handleNetworkChange);
+        }
 
+        function handleNetworkChange() {
+            isOnline = navigator.onLine;
+            updateNetworkIndicator();
+            
+            if (isOnline) {
+                showTemporaryStatus("You're back online!", 'online');
+            } else {
+                showTemporaryStatus("You've gone offline", 'offline');
+            }
+        }
 
+        function updateNetworkIndicator() {
+            const networkStatus = document.getElementById("network-status");
+            if (!networkStatus) return;
+            
+            if (isOnline) {
+                networkStatus.className = "online";
+                networkStatus.innerHTML = '<i class="fas fa-wifi"></i> Online';
+            } else {
+                networkStatus.className = "offline";
+                networkStatus.innerHTML = '<i class="fas fa-plug"></i> Offline';
+            }
+        }
 
-
+        function showTemporaryStatus(message, type) {
+            const status = document.createElement('div');
+            status.className = `network-alert ${type}`;
+            status.innerHTML = message;
+            document.body.appendChild(status);
+            
+            setTimeout(() => {
+                status.classList.add('fade-out');
+                setTimeout(() => status.remove(), 1000);
+            }, 3000);
+        }
 
         function showNameModal() {
             nameModal.style.display = 'block';
@@ -1229,95 +1060,81 @@ document.getElementById('confirmClear').addEventListener('click', () => {
             nameModal.style.display = 'none';
         }
 
-
-        // Basic email validation (you might want a more robust one)
         function isValidEmail(email) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(email);
         }
 
-       async function saveNameAndEmail() {
-    const name = nameInput.value.trim();
-    const email = emailInput.value.trim();
+        async function saveNameAndEmail() {
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
 
-    if (!name) {
-        alert('Please enter a valid name!');
-        return;
-    }
-    if (!email) {
-        alert('Please enter your email!');
-        return;
-    }
-    if (!isValidEmail(email)) {
-        alert('Please enter a valid email address!');
-        return;
-    }
+            if (!name) {
+                alert('Please enter a valid name!');
+                return;
+            }
+            if (!email) {
+                alert('Please enter your email!');
+                return;
+            }
+            if (!isValidEmail(email)) {
+                alert('Please enter a valid email address!');
+                return;
+            }
 
-    // Show loading state
-    saveButton.disabled = true;
-    saveButton.textContent = 'Sending...';
+            saveButton.disabled = true;
+            saveButton.textContent = 'Sending...';
 
-    try {
-        const submissionSuccess = await submitUserInfo(name, email);
+            try {
+                const submissionSuccess = await submitUserInfo(name, email);
 
-        if (submissionSuccess) {
-            localStorage.setItem(CONFIG.userNameKey, name);
-            localStorage.setItem(CONFIG.userEmailKey, email);
-            hideNameModal();
-            displayWelcomeMessage(name);
-        } else {
-            alert('Failed to submit your information. Please try again.');
+                if (submissionSuccess) {
+                    localStorage.setItem(CONFIG.userNameKey, name);
+                    localStorage.setItem(CONFIG.userEmailKey, email);
+                    hideNameModal();
+                    displayWelcomeMessage(name);
+                } else {
+                    alert('Failed to submit your information. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error in saveNameAndEmail:', error);
+                alert('An unexpected error occurred. Please try again.');
+            } finally {
+                saveButton.disabled = false;
+                saveButton.textContent = 'Save';
+            }
         }
-    } catch (error) {
-        console.error('Error in saveNameAndEmail:', error);
-        alert('An unexpected error occurred. Please try again.');
-    } finally {
-        // Reset button state
-        saveButton.disabled = false;
-        saveButton.textContent = 'Save';
-    }
-}
-
-        // NEW FUNCTION TO "SUBMIT" USER INFO
 
         async function submitUserInfo(name, email) {
-    const formSubmitURL = 'https://formsubmit.co/ukowills@gmail.com';
+            const formSubmitURL = 'https://formsubmit.co/ukowills@gmail.com';
 
-    const data = {
-        name: name,
-        email: email,
-        _subject: "New User Sign-up from Spencer Chat",
-        _template: "table",
-        timestamp: new Date().toISOString()
-    };
+            const data = {
+                name: name,
+                email: email,
+                _subject: "New User Sign-up from Spencer Chat",
+                _template: "table",
+                timestamp: new Date().toISOString()
+            };
 
-    try {
-        const response = await fetch(formSubmitURL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(data),
-        });
+            try {
+                const response = await fetch(formSubmitURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data),
+                });
 
-        // Get the response text (formsubmit.co returns HTML)
-        const responseText = await response.text();
-        console.log('Form submission response:', responseText);
+                const responseText = await response.text();
+                console.log('Form submission response:', responseText);
 
-        if (response.ok) {
-            console.log('Successfully submitted to formsubmit.co');
-            return true; // Indicate success
-        } else {
-            console.error('Submission failed with status:', response.status);
-            return false; // Indicate failure
+                return response.ok;
+            } catch (error) {
+                console.error('Error submitting to formsubmit.co:', error);
+                return false;
+            }
         }
-    } catch (error) {
-        console.error('Error submitting to formsubmit.co:', error);
-        return false; // Indicate failure
-    }
-}
-
 
         function displayWelcomeMessage(name = null) {
             const timeGreeting = getTimeGreeting();
@@ -1358,449 +1175,512 @@ document.getElementById('confirmClear').addEventListener('click', () => {
         }
 
         function switchPage(page) {
-            currentPage = page;
-            if (page === 'chat') {
-                chatContainer.style.display = 'flex';
-                historyPage.style.display = 'none';
-                navChat.classList.add('active');
-                navHistory.classList.remove('active');
+    currentPage = page;
+    if (page === 'chat') {
+        chatContainer.style.display = 'flex';
+        settingsPage.style.display = 'none';
+        navChat.classList.add('active');
+        navSettings.classList.remove('active');
+    } else if (page === 'settings') {
+        chatContainer.style.display = 'none';
+        settingsPage.style.display = 'block';
+        navChat.classList.remove('active');
+        navSettings.classList.add('active');
+
+        console.log('[debug] Loading settings page...');
+        updateStorageMeter(); // <-- add this here to be safe
+    }
+}
+        // Add this to your settings page initialization
+function loadSettingsPage() {
+    updateStorageMeter();
+    
+    // Update the percentage display
+    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+    const historySize = JSON.stringify(history).length;
+    const percentage = Math.min(100, Math.round((historySize / (5 * 1024 * 1024)) * 100));
+    document.getElementById('storage-percentage').textContent = `${percentage}%`;
+}
+
+
+function toggleFAQ(element) {
+    const answer = element.querySelector('.faq-answer');
+    answer.style.display = answer.style.display === 'none' ? 'block' : 'none';
+}
+        function updateStorageMeter() {
+    try {
+        const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+        const historySize = JSON.stringify(history).length;
+        const usedKB = (historySize / 1024).toFixed(2);
+        const percentage = Math.min(100, (historySize / (5 * 1024 * 1024)) * 100);
+
+        // Update all storage displays
+        storageUsedEl.textContent = `${usedKB} KB`;
+        storageTotalEl.textContent = `5 MB`;
+        document.getElementById('storage-percentage').textContent = `${Math.round(percentage)}%`; // <<< ADD THIS
+        storageProgressEl.style.width = `${percentage}%`;
+
+        // Color coding
+        if (percentage > 90) {
+            storageProgressEl.style.background = 'linear-gradient(90deg, #d63031, #ff7675)';
+            document.querySelector('.storage-description').style.color = '#ff6b6b';
+        } else if (percentage > 70) {
+            storageProgressEl.style.background = 'linear-gradient(90deg, #f39c12, #f1c40f)';
+            document.querySelector('.storage-description').style.color = '#feca57';
+        } else {
+            storageProgressEl.style.background = 'linear-gradient(90deg, #FFA500, #FF4500)';
+            document.querySelector('.storage-description').style.color = '#FFA500';
+        }
+    } catch (e) {
+        console.error("Error calculating storage:", e);
+    }
+}
+
+        function showClearStorageConfirmation() {
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            const welcomeMsg = document.querySelector('.chat-welcome-message');
+            if (welcomeMsg) {
+                welcomeMsg.classList.add('faded');
+            }
+            
+            addMessage(message, 'user');
+            userInput.value = '';
+
+            const cachedResponse = checkCache(message);
+            if (cachedResponse) {
+                addMessage(cachedResponse, 'bot');
+                return;
+            }
+
+            if (isOnline) {
+                const thinkingElement = createThinkingElement();
+                chatBox.appendChild(thinkingElement);
+
+                try {
+                    const response = await generateResponse(message);
+                    chatBox.removeChild(thinkingElement);
+                    addMessage(response, 'bot');
+                    saveToCache(message, response);
+                } catch (error) {
+                    console.error("API Error:", error);
+                    chatBox.removeChild(thinkingElement);
+                    const fallback = getOfflineResponse(message);
+                    addMessage(fallback, 'bot');
+                }
             } else {
-                chatContainer.style.display = 'none';
-                historyPage.style.display = 'block';
-                navChat.classList.remove('active');
-                navHistory.classList.add('active');
-                loadHistoryView();
+                const fallback = getOfflineResponse(message);
+                addMessage(fallback, 'bot');
             }
         }
 
-      async function sendMessage() {
-    const message = userInput.value.trim();
-    if (!message) return;
+        function createThinkingElement() {
+            const container = document.createElement('div');
+            container.className = 'thinking-mode';
 
-// Fade welcome message when first real message is sent
-    const welcomeMsg = document.querySelector('.chat-welcome-message');
-    if (welcomeMsg) {
-        welcomeMsg.classList.add('faded');
-    }
-    
-    addMessage(message, 'user');
-    userInput.value = '';
+            const text = document.createElement('span');
+            text.className = 'thinking-text';
+            text.textContent = THINKING_MESSAGES[Math.floor(Math.random() * THINKING_MESSAGES.length)];
 
-    // Check cache first (works offline)
-    const cachedResponse = checkCache(message);
-    if (cachedResponse) {
-        addMessage(cachedResponse, 'bot');
-        return;
-    }
+            const dots = document.createElement('div');
+            dots.className = 'thinking-dots';
 
-    // Online: Call API
-    if (isOnline) {
-        const thinkingElement = createThinkingElement();
-        chatBox.appendChild(thinkingElement);
+            for (let i = 0; i < 3; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'thinking-dot';
+                dots.appendChild(dot);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
 
-        try {
-            const response = await generateResponse(message);
-            chatBox.removeChild(thinkingElement);
-            addMessage(response, 'bot');
-            saveToCache(message, response); // Save to cache
-        } catch (error) {
-            console.error("API Error:", error);
-            chatBox.removeChild(thinkingElement);
-            const fallback = getOfflineResponse(message);
-            addMessage(fallback, 'bot');
+            container.appendChild(text);
+            container.appendChild(dots);
+
+            return container;
         }
-    }
-    // Offline: Show fallback
-    else {
-        const fallback = getOfflineResponse(message);
-        addMessage(fallback, 'bot');
-    }
-}
-
-// Cache management functions
-function saveToCache(userMsg, botMsg) {
-    try {
-        let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-        
-        // Add new conversation with timestamp
-        history.push({
-            user: userMsg,
-            bot: botMsg,
-            timestamp: new Date().toISOString()
-        });
-
-        // Keep only the last 100 conversations to prevent storage overflow
-        if (history.length > 100) {
-            history = history.slice(-100);
-        }
-
-        localStorage.setItem(CONFIG.chatHistoryKey, JSON.stringify(history));
-        return true;
-    } catch (e) {
-        console.error("Error saving to cache:", e);
-        return false;
-    }
-}
-
-function checkCache(userMsg) {
-    try {
-        const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-        
-        // Find the most recent matching message (case insensitive)
-        const match = history.reverse().find(entry => 
-            entry.user.toLowerCase() === userMsg.toLowerCase()
-        );
-        
-        return match ? match.bot : null;
-    } catch (e) {
-        console.error("Error checking cache:", e);
-        return null;
-    }
-}
-
-// Helper function to create thinking element
-function createThinkingElement() {
-    const container = document.createElement('div');
-    container.className = 'thinking-mode';
-
-    const text = document.createElement('span');
-    text.className = 'thinking-text';
-    text.textContent = THINKING_MESSAGES[Math.floor(Math.random() * THINKING_MESSAGES.length)];
-
-    const dots = document.createElement('div');
-    dots.className = 'thinking-dots';
-
-    // Add three animated dots
-    for (let i = 0; i < 3; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'thinking-dot';
-        dots.appendChild(dot);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    container.appendChild(text);
-    container.appendChild(dots);
-
-    return container;
-}
 
         function addMessage(text, sender) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${sender}`;
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
 
-    if (sender === 'bot') {
-        messageDiv.innerHTML = `
-            ${text}
-            <button class="copy-btn" title="Copy to clipboard">
-                <i class="fas fa-copy"></i>
-            </button>
-        `;
+            if (sender === 'bot') {
+                messageDiv.innerHTML = `
+                    ${text}
+                    <button class="copy-btn" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                `;
 
-        // Add copy functionality
-        const copyBtn = messageDiv.querySelector('.copy-btn');
-        copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(text).then(() => {
-                // Visual feedback
-                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                copyBtn.style.background = '#4CAF50';
-                setTimeout(() => {
-                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
-                    copyBtn.style.background = '#333';
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                copyBtn.innerHTML = '<i class="fas fa-times"></i>';
-                copyBtn.style.background = '#f44336';
-                setTimeout(() => {
-                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
-                    copyBtn.style.background = '#333';
-                }, 2000);
-            });
+                const copyBtn = messageDiv.querySelector('.copy-btn');
+                copyBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(text).then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        copyBtn.style.background = '#4CAF50';
+                        setTimeout(() => {
+                            copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                            copyBtn.style.background = '#333';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                        copyBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        copyBtn.style.background = '#f44336';
+                        setTimeout(() => {
+                            copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                            copyBtn.style.background = '#333';
+                        }, 2000);
+                    });
+                });
+            } else {
+                messageDiv.textContent = text;
+            }
+
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function generateResponse(input) {
+    console.log("User Input:", input);
+
+    try {
+        const selectedKey = localStorage.getItem("selectedModel") || "gemini15";
+        const model = MODELS[selectedKey];
+
+        let body, headers, url = model.endpoint;
+
+        if (model.type === "gemini") {
+            headers = { "Content-Type": "application/json" };
+            body = {
+                contents: [{
+                    parts: [{ text: input }]
+                }]
+            };
+            url += `?key=${model.apiKey}`;
+        } else if (model.type === "openrouter") {
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${model.apiKey}`
+            };
+            body = {
+                model: model.model,
+                messages: [
+                    { role: "user", content: input }
+                ]
+            };
+        } else {
+            throw new Error("Unsupported model type");
+        }
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(body)
         });
-    } else {
-        messageDiv.textContent = text;
-    }
 
-    chatBox.appendChild(messageDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
+        const data = await response.json();
+        console.log("API Response:", data);
 
-       async function generateResponse(input) {
-        console.log("User Input:", input);
-
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CONFIG.geminiApiKey}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: input
-                        }]
-                    }]
-                })
-            });
-
-            const data = await response.json();
-            console.log("API Response:", data);
-
+        if (model.type === "gemini") {
             if (data.candidates && data.candidates[0].content.parts[0].text) {
                 return formatBotResponse(data.candidates[0].content.parts[0].text);
-            } else {
-                console.error("Unexpected API response format");
-                return getOfflineResponse(input);
             }
-        } catch (error) {
-            console.error("Error calling Gemini API:", error);
-            return getOfflineResponse(input);
+        } else if (model.type === "openrouter") {
+            if (data.choices && data.choices[0].message.content) {
+                return formatBotResponse(data.choices[0].message.content);
+            }
         }
-    }
 
-    function formatBotResponse(text) {
-    // 1. Convert URLs to clickable links
+        console.error("Unexpected API response format");
+        return getOfflineResponse(input);
+
+    } catch (error) {
+        console.error("API error:", error);
+        return getOfflineResponse(input);
+    }
+}
+        function formatBotResponse(text) {
+    // Convert links
     text = text.replace(
-        /(https?:\/\/[^\s]+)/g, 
+        /(https?:\/\/[^\s]+)/g,
         '<a href="$1" target="_blank" rel="noopener noreferrer" class="chat-link">$1</a>'
     );
-    
-    // 2. Keep your existing formatting
-    text = text.replace(/\*\*(.*?)\*\*/g, '$1')
-               .replace(/\*(.*?)\*/g, '$1')
-               .replace(/`(.*?)`/g, '$1');
-    
-    // 3. Rest of your formatting...
-    text = text.replace(/\n\n+/g, '</p><p>')
-               .replace(/\n/g, '<br>');
-    
-    if (!text.startsWith('<p>')) {
-        text = '<p>' + text + '</p>';
-    }
-    
-    return text.replace(/<p><\/p>/g, '')
-               .replace(/<p><br><\/p>/g, '')
-               .trim();
-}
-        function getOfflineResponse(input) {
-    // Try to find the most relevant cached answer
-    try {
-        const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-        
-        // 1. First try exact match (case insensitive)
-        const exactMatch = history.findLast(entry => 
-            entry.user.toLowerCase() === input.toLowerCase()
-        );
-        if (exactMatch) return exactMatch.bot;
 
-        // 2. Try keyword matching if no exact match
-        const keywords = input.toLowerCase().split(/\s+/);
-        const keywordMatch = history.findLast(entry => 
-            keywords.some(keyword => 
-                entry.user.toLowerCase().includes(keyword) &&
-                keyword.length > 3 // Only consider meaningful keywords
-            )
-        );
-        
-        if (keywordMatch) {
-            return this.formatRelevantResponse(keywordMatch.bot);
-        }
+    // Convert markdown headers to H1/H2/H3
+    text = text.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    text = text.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    text = text.replace(/^# (.*$)/gim, '<h1>$1</h1>');
 
-        // 3. Find most recent similar response using embeddings (simplified)
-        const similarMatch = this.findSemanticallySimilar(input, history);
-        if (similarMatch) return similarMatch.bot;
-
-    } catch (e) {
-        console.error("Cache access error:", e);
-    }
-
-    // Final fallback
-    return this.getRandomFallbackResponse();
-}
-
-// Helper functions
-function formatRelevantResponse(botResponse) {
-    const phrases = [
-        "This might help:",
-        "Relevant information I found:",
-        "Here's what I know:",
-        "This could be useful:",
-        "From my knowledge:"
-    ];
-    const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-    return `${randomPhrase}<br><br>${botResponse}`;
-}
-
-function findSemanticallySimilar(input, history) {
-    // Simplified semantic matching - in a real app you'd use embeddings
-    const inputWords = new Set(input.toLowerCase().split(/\W+/));
-    return history.findLast(entry => {
-        const entryWords = new Set(entry.user.toLowerCase().split(/\W+/));
-        const intersection = [...inputWords].filter(word => 
-            word.length > 3 && entryWords.has(word)
-        );
-        return intersection.length >= 2; // At least 2 meaningful words in common
-    });
-}
-
-function getRandomFallbackResponse() {
-    const fallbacks = [
-        "I'm offline right now, but I'll be able to help when we're back online.",
-        "I can't access my full knowledge while offline. Let's reconnect later.",
-        "For the most accurate help, please check back when I'm online.",
-        "My offline memory doesn't contain information about this topic.",
-        "I'd love to help with this once we're back online!"
-    ];
-    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
-}
-
-        function saveChatHistory(userMsg, botMsg) {
-    // Get existing history or initialize as array
-    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-
-    // Add new conversation with timestamp
-    history.push({
-        user: userMsg,
-        bot: botMsg,
-        timestamp: new Date().toISOString()
+    // Convert multiline code blocks (```lang\ncode```)
+    text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, function(_, lang, code) {
+        const safeCode = code.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        return `
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><code class="language-${lang || 'text'}">${safeCode}</code></pre>
+            </div>
+        `;
     });
 
-    // Save back to localStorage
-    localStorage.setItem(CONFIG.chatHistoryKey, JSON.stringify(history));
-}
-        function loadChatHistory() {
-    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-    chatBox.innerHTML = '';
+    // Convert inline code `like this`
+    text = text.replace(/`([^`\n]+)`/g, '<code>$1</code>');
 
-    // Load all cached messages
-    history.forEach(entry => {
-        addMessage(entry.user, 'user');
-        addMessage(entry.bot, 'bot');
-    });
+    // Convert markdown bold/italic
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-    // Show welcome if empty
-    if (history.length === 0) {
-        const welcomeMsg = document.createElement('div');
-        welcomeMsg.className = 'chat-welcome-message';
-        welcomeMsg.textContent = '';
-        chatBox.appendChild(welcomeMsg);
-    }
+    // Convert double newlines to paragraphs, single to <br>
+    text = text.replace(/\n{2,}/g, '</p><p>');
+    text = text.replace(/\n/g, '<br>');
+
+    // Wrap content in paragraph tags if not already block-level
+    if (!text.startsWith('<p>')) text = '<p>' + text;
+    if (!text.endsWith('</p>')) text += '</p>';
+
+    return text.replace(/<p><\/p>/g, '').trim();
 }
 
-        function loadHistoryView() {
-    const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
-    historyContainer.innerHTML = '';
+function copyCode(button) {
+    const code = button.parentElement.querySelector("pre code");
 
-    if (history.length === 0) {
-        emptyState.style.display = 'block';
+    if (!code) {
+        console.error("Code block not found");
         return;
     }
 
-    emptyState.style.display = 'none';
+    const rawCode = code.textContent;
 
-    // Group conversations by calendar date
-    const groupedByDate = history.reduce((groups, entry) => {
-        const dateObj = new Date(entry.timestamp);
-        const dateKey = `${dateObj.getFullYear()}-${dateObj.getMonth()+1}-${dateObj.getDate()}`;
-
-        if (!groups[dateKey]) {
-            groups[dateKey] = [];
-        }
-        groups[dateKey].push(entry);
-        return groups;
-    }, {});
-
-    // Sort dates in descending order
-    const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
-
-    sortedDates.forEach(dateKey => {
-        const conversations = groupedByDate[dateKey];
-        const dateObj = new Date(dateKey);
-        const card = document.createElement('div');
-        card.className = 'history-card';
-
-        // Format date nicely
-        const formattedDate = dateObj.toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-
-        // Use first message as title
-        const firstConvo = conversations[0];
-        const title = firstConvo.user.length > 30
-            ? firstConvo.user.substring(0, 30) + '...'
-            : firstConvo.user;
-
-        card.innerHTML = `
-            <div class="card-header">
-                <h3>${title}</h3>
-                <div class="date">${formattedDate}</div>
-                <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="card-content">
-                ${conversations.map(convo => `
-                    <div class="conversation-item">
-                        <div class="time-stamp">
-                            ${new Date(convo.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
-                        </div>
-                        <div class="message user">${convo.user}</div>
-                        <div class="message bot">
-                            ${convo.bot}
-                            <button class="copy-btn" title="Copy to clipboard">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                `).join('')}
-                <button class="continue-chat-btn">
-                    <i class="fas fa-comment"></i> Continue this chat
-                </button>
-            </div>
-        `;
-
-        // Add event listeners
-        const continueBtn = card.querySelector('.continue-chat-btn');
-        continueBtn.addEventListener('click', () => {
-            switchPage('chat');
-            chatBox.innerHTML = '';
-            conversations.forEach(convo => {
-                addMessage(convo.user, 'user');
-                addMessage(convo.bot, 'bot');
-            });
-        });
-
-        // Toggle functionality
-        const header = card.querySelector('.card-header');
-        header.addEventListener('click', () => {
-            card.classList.toggle('expanded');
-        });
-
-        historyContainer.appendChild(card);
+    navigator.clipboard.writeText(rawCode).then(() => {
+        button.textContent = "Copied!";
+        setTimeout(() => {
+            button.textContent = "Copy";
+        }, 1500);
+    }).catch(err => {
+        console.error("Copy failed", err);
+        button.textContent = "Failed";
     });
 }
-        function clearHistory() {
-             // Show our custom modal instead of default confirm
-    document.getElementById('confirmModal').classList.add('active');{
+        function getOfflineResponse(input) {
+            try {
+                const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+                
+                const exactMatch = history.findLast(entry => 
+                    entry.user.toLowerCase() === input.toLowerCase()
+                );
+                if (exactMatch) return exactMatch.bot;
 
-    // Just show the modal - no clearing happens here
-    document.getElementById('confirmModal').classList.add('active');
-    return false; // Prevent default behavior
-}
+                const keywords = input.toLowerCase().split(/\s+/);
+                const keywordMatch = history.findLast(entry => 
+                    keywords.some(keyword => 
+                        entry.user.toLowerCase().includes(keyword) &&
+                        keyword.length > 3
+                    )
+                );
+                
+                if (keywordMatch) {
+                    return formatRelevantResponse(keywordMatch.bot);
+                }
+
+                const similarMatch = findSemanticallySimilar(input, history);
+                if (similarMatch) return similarMatch.bot;
+
+            } catch (e) {
+                console.error("Cache access error:", e);
+            }
+
+            return getRandomFallbackResponse();
         }
 
-        document.addEventListener('DOMContentLoaded', initApp);
-    </script>
+        function formatRelevantResponse(botResponse) {
+            const phrases = [
+                "This might help:",
+                "Relevant information I found:",
+                "Here's what I know:",
+                "This could be useful:",
+                "From my knowledge:"
+            ];
+            const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+            return `${randomPhrase}<br><br>${botResponse}`;
+        }
 
-    <!-- Simple Modal -->
-<div class="modal-overlay" id="confirmModal">
-    <div class="simple-modal">
-        <h3>Clear All History?</h3>
-        <p>This will permanently delete all your chat history.</p>
-        <div class="modal-actions">
-            <button class="modal-btn cancel" id="cancelClear">Cancel</button>
-            <button class="modal-btn confirm" id="confirmClear">Clear</button>
-        </div>
+        function findSemanticallySimilar(input, history) {
+            const inputWords = new Set(input.toLowerCase().split(/\W+/));
+            return history.findLast(entry => {
+                const entryWords = new Set(entry.user.toLowerCase().split(/\W+/));
+                const intersection = [...inputWords].filter(word => 
+                    word.length > 3 && entryWords.has(word)
+                );
+                return intersection.length >= 2;
+            });
+        }
+
+        function getRandomFallbackResponse() {
+    const online = navigator.onLine;
+
+    if (online) {
+        const messages = [
+            "Hmm... this model might be on cooldown or temporarily unavailable.",
+            "Looks like something's blocking a response right now. Try switching to another model.",
+            "This one’s taking a break! You can switch to another model for now.",
+            "If you're online and seeing this, the current model may be rate-limited or broken.",
+            "Spencer here. This model didn’t respond. Flip the switch and let’s keep going."
+        ];
+
+        const tip = messages[Math.floor(Math.random() * messages.length)];
+        return `
+            ${tip}<br><br>
+            <button onclick="switchPage('settings')" style="
+                background: linear-gradient(45deg, #FFA500, #FF4500);
+                border: none;
+                border-radius: 8px;
+                padding: 10px 18px;
+                font-weight: bold;
+                cursor: pointer;
+                color: white;
+                margin-top: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            ">
+                Switch Model
+            </button>
+        `;
+    } else {
+        const fallbacks = [
+    "We’re flying offline and… oops, I don’t have this one saved. Reconnect for my full brain.",
+    "Offline and out of ammo for this question. I’ll have more to say once we’re back online.",
+    "I checked my offline memory… nothing on this one. Let’s try again with a signal.",
+    "I’d love to help, but this question isn’t in my offline stash. Wi-Fi might save us.",
+    "That one’s not in my local memory banks. Reconnect to unlock smarter answers!"
+];
+        return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    }
+}
+
+        function saveToCache(userMsg, botMsg) {
+            try {
+                let history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+                
+                history.push({
+                    user: userMsg,
+                    bot: botMsg,
+                    timestamp: new Date().toISOString()
+                });
+
+                if (history.length > 100) {
+                    history = history.slice(-100);
+                }
+
+                localStorage.setItem(CONFIG.chatHistoryKey, JSON.stringify(history));
+                return true;
+            } catch (e) {
+                console.error("Error saving to cache:", e);
+                return false;
+            }
+        }
+
+        function checkCache(userMsg) {
+            try {
+                const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+                const match = history.reverse().find(entry => 
+                    entry.user.toLowerCase() === userMsg.toLowerCase()
+                );
+                return match ? match.bot : null;
+            } catch (e) {
+                console.error("Error checking cache:", e);
+                return null;
+            }
+        }
+
+        function loadChatHistory() {
+            const history = JSON.parse(localStorage.getItem(CONFIG.chatHistoryKey)) || [];
+            chatBox.innerHTML = '';
+
+            history.forEach(entry => {
+                addMessage(entry.user, 'user');
+                addMessage(entry.bot, 'bot');
+            });
+
+            if (history.length === 0) {
+                const welcomeMsg = document.createElement('div');
+                welcomeMsg.className = 'chat-welcome-message';
+                welcomeMsg.textContent = '';
+                chatBox.appendChild(welcomeMsg);
+            }
+        }
+
+        function startNewChat() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = '';
+            
+            const welcomeMsg = document.createElement('div');
+            welcomeMsg.className = 'chat-welcome-message';
+            welcomeMsg.textContent = 'Hi, How Can I Help';
+            chatBox.appendChild(welcomeMsg);
+            
+            chatBox.scrollTop = 0;
+        }
+
+        function resetUser() {
+            localStorage.removeItem(CONFIG.userNameKey);
+            localStorage.removeItem(CONFIG.userEmailKey);
+            appContainer.style.display = 'none';
+            welcomePage.style.display = 'flex';
+            displayWelcomeMessage();
+            alert("User data cleared. Welcome page will show again.");
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+    initApp();
+
+    const openUserGuideBtn = document.getElementById('openUserGuide');
+    const userGuideModal = document.getElementById('userGuideModal');
+    const closeUserGuideBtn = document.getElementById('closeUserGuide');
+
+    if (openUserGuideBtn && userGuideModal && closeUserGuideBtn) {
+      openUserGuideBtn.addEventListener('click', () => {
+        userGuideModal.classList.add('active');
+      });
+
+      closeUserGuideBtn.addEventListener('click', () => {
+        userGuideModal.classList.remove('active');
+      });
+
+      userGuideModal.addEventListener('click', (e) => {
+        if (e.target === userGuideModal) {
+          userGuideModal.classList.remove('active');
+        }
+      });
+    }
+});
+    </script>
+    <div id="userGuideModal" class="modal-overlay">
+  <div class="simple-modal">
+    <h3 style="color: #FFA726;">Quick User Guide</h3>
+    <div class="modal-content-text" style="margin-top: 10px;">
+      <p>Spencer AI works in both online and offline modes automatically.</p>
+
+      <h4>🌐 Online Mode</h4>
+      <ul>
+        <li>Real-time AI responses</li>
+        <li>Saves knowledge for offline use</li>
+      </ul>
+
+      <h4>🚫 Offline Mode</h4>
+      <ul>
+        <li>Uses saved knowledge</li>
+        <li>Instant responses</li>
+      </ul>
+
+      <h4 style="margin-top: 15px;">FAQs</h4>
+      <p><strong>How do I know my connection mode?</strong><br>
+      The network indicator at the top shows Online or Offline status.</p>
+
+      <p><strong>How does offline learning work?</strong><br>
+      Spencer AI learns from your online chats and stores knowledge for offline use.</p>
     </div>
+    <button id="closeUserGuide" class="modal-btn cancel" style="margin-top: 20px;">Close</button>
+  </div>
 </div>
 </body>
 </html>
