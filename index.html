@@ -653,21 +653,120 @@
     color: #ccc;
 }
 
-#modelSelect {
-    background-color: #2c2c2c;
-    color: white;
-    border: 1px solid #555;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 1rem;
-    width: 100%;
-    transition: border 0.3s, background-color 0.3s;
+/* Model Selection Modal Styles */
+.model-modal {
+    background: #252525;
+    border-radius: 12px;
+    padding: 25px;
+    width: 90%;
+    max-width: 600px;
+    border: 1px solid #444;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
-#modelSelect:focus {
-    outline: none;
+.model-modal h3 {
+    color: #FFA500;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.model-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.model-card {
+    background: #1e1e1e;
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.model-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 165, 0, 0.2);
     border-color: #FFA500;
-    background-color: #1f1f1f;
+}
+
+.model-card.selected {
+    border: 2px solid #FFA500;
+    background: #252525;
+}
+
+.model-card h4 {
+    color: #FFA500;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.model-card p {
+    color: #aaa;
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+}
+
+.model-card .model-speed {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.model-card .model-accuracy {
+    color: #2196F3;
+    font-weight: bold;
+}
+
+.model-card .model-type {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #333;
+    color: #FFA500;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.model-card .model-select-btn {
+    display: none;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: #FFA500;
+    color: black;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.model-card:hover .model-select-btn {
+    display: block;
+}
+
+#closeModelModal {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background: #333;
+    color: white;
+}
+
+#closeModelModal:hover {
+    background: #444;
 }
 
 pre {
@@ -849,11 +948,12 @@ code {
                     <i class="fas fa-trash-alt"></i> Clear All Chat Data
                 </button>
 
-                <div class="settings-card">
+             <div class="settings-card">
     <h3><i class="fas fa-robot"></i> AI Model</h3>
-    <p>Choose which model Spencer should use:</p>
-    <select id="modelSelect" style="margin-top:10px; width:100%; padding:10px; border-radius:8px;">
-    </select>
+    <p>Current model: <strong id="currentModelName">Loading...</strong></p>
+    <button id="changeModelBtn" class="settings-button" style="width:100%; margin-top:10px;">
+        <i class="fas fa-exchange-alt"></i> Change Model
+    </button>
 </div>
 
                 <!-- User Guide Section -->
@@ -939,13 +1039,18 @@ code {
         name: "Gemini 1.5 Flash",
         endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
         apiKey: CONFIG.geminiApiKey,
-        type: "gemini"
+        type: "gemini",
+         speed: "Medium",
+        accuracy: "Ultra High"
+
     },
     gemini20: {
         name: "Gemini 2.0 Flash",
         endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
         apiKey: CONFIG.geminiApiKey,
-        type: "gemini"
+        type: "gemini",
+        speed: "Medium",
+        accuracy: "Ultra High"
     },
     deepseek: {
         name: "Deepseek Prover V2",
@@ -985,7 +1090,8 @@ code {
             "Generating response...",
             "Working on it...",
             "Give me a sec...",
-            "hmmm..."
+            "hmmm..." ,
+            "Really...."
         ];
 
         const welcomePage = document.getElementById('welcome-page');
@@ -1009,6 +1115,73 @@ code {
         const newChatBtn = document.getElementById('new-chat-btn');
         const resetUserBtn = document.getElementById('reset-user');
 
+
+         function openModelModal() {
+    document.getElementById('modelSelectModal').classList.add('active');
+    populateModelGrid();
+}
+
+function closeModelModal() {
+    document.getElementById('modelSelectModal').classList.remove('active');
+}
+
+function populateModelGrid() {
+    const modelGrid = document.getElementById('modelGrid');
+    modelGrid.innerHTML = '';
+
+    const currentModel = localStorage.getItem("selectedModel") || "gemini15";
+
+    for (const key in MODELS) {
+        const model = MODELS[key];
+        const card = document.createElement('div');
+        card.className = `model-card ${key === currentModel ? 'selected' : ''}`;
+        card.dataset.modelKey = key;
+
+        card.innerHTML = `
+            <h4>${model.name}</h4>
+            <p><span class="model-speed">⚡ ${model.speed || 'Medium'}</span> speed</p>
+            <p><span class="model-accuracy">🎯 ${model.accuracy || 'Medium'}</span> accuracy</p>
+            <button class="model-select-btn">Select</button>
+        `;
+
+        card.addEventListener('click', () => {
+            selectModel(key);
+        });
+
+        modelGrid.appendChild(card);
+    }
+}
+
+function selectModel(modelKey) {
+    localStorage.setItem("selectedModel", modelKey);
+    populateModelGrid(); // Refresh the grid to show new selection
+    updateCurrentModelDisplay();
+
+    // Show confirmation for 1.5 seconds
+    const cards = document.querySelectorAll('.model-card');
+    cards.forEach(card => {
+        if (card.dataset.modelKey === modelKey) {
+            card.classList.add('selected');
+            card.innerHTML = `
+                <h4 style="color: #4CAF50;"><i class="fas fa-check-circle"></i> ${MODELS[modelKey].name}</h4>
+                <p>Model selected successfully!</p>
+            `;
+        }
+    });
+
+    setTimeout(() => {
+        closeModelModal();
+    }, 1500);
+}
+
+function updateCurrentModelDisplay() {
+    const currentKey = localStorage.getItem("selectedModel") || "gemini15";
+    const currentModelName = document.getElementById('currentModelName');
+    if (currentModelName) {
+        currentModelName.textContent = MODELS[currentKey].name;
+    }
+}
+
         // State
         let currentPage = 'chat';
         let isOnline = navigator.onLine;
@@ -1025,27 +1198,7 @@ code {
             initNetworkStatus();
 
             updateStorageMeter(); // <- add this to ensure the percentage gets computed
-
-            function populateModelSelector() {
-    const selector = document.getElementById("modelSelect");
-    selector.innerHTML = '';
-
-    for (const key in MODELS) {
-        const option = document.createElement("option");
-        option.value = key;
-        option.textContent = MODELS[key].name;
-        selector.appendChild(option);
-    }
-
-    const saved = localStorage.getItem("selectedModel") || "gemini15";
-    selector.value = saved;
-
-    selector.addEventListener("change", () => {
-        localStorage.setItem("selectedModel", selector.value);
-    });
-}
-
-populateModelSelector();
+            updateCurrentModelDisplay();
 
         }
 
@@ -1086,6 +1239,16 @@ populateModelSelector();
             document.getElementById('cancelClear').addEventListener('click', () => {
                 document.getElementById('confirmModal').classList.remove('active');
             });
+
+            // Add these inside setupEventListeners()
+document.getElementById('closeModelModal').addEventListener('click', closeModelModal);
+document.getElementById('modelSelectModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('modelSelectModal')) {
+        closeModelModal();
+    }
+});
+
+document.getElementById('changeModelBtn')?.addEventListener('click', openModelModal);
         }
 
         function initNetworkStatus() {
@@ -1161,7 +1324,7 @@ populateModelSelector();
             }
 
             saveButton.disabled = true;
-            saveButton.textContent = 'Sending...';
+            saveButton.textContent = 'Saving...';
 
             try {
                 const submissionSuccess = await submitUserInfo(name, email);
@@ -1752,6 +1915,18 @@ function closeModal(id) {
     if (modal) modal.classList.remove("active");
 }
     </script>
+
+  <div id="modelSelectModal" class="modal-overlay">
+    <div class="model-modal">
+        <h3><i class="fas fa-robot"></i> Choose AI Model</h3>
+        <div class="model-grid" id="modelGrid">
+            <!-- Models will be inserted here by JavaScript -->
+        </div>
+        <button class="modal-btn cancel" id="closeModelModal">Close</button>
+    </div>
+</div>
+
+
     <div id="userGuideModal" class="modal-overlay">
   <div class="simple-modal">
     <h3 style="color: #FFA726;">Quick User Guide</h3>
