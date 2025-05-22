@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-     
-     <!-- clarity -->
+
+     <!-- clarity  -->
      <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -463,6 +463,7 @@
         }
 
         #new-chat-btn-container {
+
             position: fixed;
             bottom: 200px;
             left: 0;
@@ -471,6 +472,7 @@
             justify-content: center;
             z-index: 999;
             padding: 0 20px;
+            pointer-events: auto; /* Ensure this is set */
         }
 
         #new-chat-btn {
@@ -623,22 +625,33 @@
 
 
 //For Modal
-#userGuideModal {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+.guide-section {
+    background: rgba(255,255,255,0.05);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
 }
 
-#userGuideModal.active {
-  opacity: 1;
-  pointer-events: all;
+.faq-item {
+    background: #1e1e1e;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.faq-item:hover {
+    background: #252525;
+}
+
+.faq-content {
+    color: #ccc;
+    font-size: 0.95rem;
+}
+
+.modal-content-text {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 10px;
 }
 
 //For The Ai model card
@@ -1104,7 +1117,7 @@ code {
             "Give me a sec...",
             "hmmm..." ,
             "Really...."
-           
+
         ];
 
         const welcomePage = document.getElementById('welcome-page');
@@ -1233,8 +1246,8 @@ function updateCurrentModelDisplay() {
             navChat.addEventListener('click', () => switchPage('chat'));
             navSettings.addEventListener('click', () => switchPage('settings'));
             saveButton.addEventListener('click', saveNameAndEmail);
-     <!-- Reset Button         resetUserBtn.addEventListener('click', resetUser);
-     -->       newChatBtn.addEventListener('click', startNewChat);
+     <!-- Reset Button         resetUserBtn.addEventListener('click', resetUser);  -->
+          newChatBtn.addEventListener('click', startNewChat);
 
             document.getElementById('confirmModal').addEventListener('click', (e) => {
                 if (e.target === document.getElementById('confirmModal')) {
@@ -1259,6 +1272,7 @@ document.getElementById('modelSelectModal').addEventListener('click', (e) => {
     if (e.target === document.getElementById('modelSelectModal')) {
         closeModelModal();
     }
+
 });
 
 document.getElementById('changeModelBtn')?.addEventListener('click', openModelModal);
@@ -1872,6 +1886,7 @@ function copyCode(button) {
         }
 
         function startNewChat() {
+                console.log("New chat button clicked"); // Add this line
             const chatBox = document.getElementById('chat-box');
             chatBox.innerHTML = '';
 
@@ -1927,6 +1942,15 @@ function closeModal(id) {
     const modal = document.getElementById(id);
     if (modal) modal.classList.remove("active");
 }
+
+function toggleFAQ(element) {
+    const content = element.querySelector('.faq-content');
+    if (content.style.display === 'block') {
+        content.style.display = 'none';
+    } else {
+        content.style.display = 'block';
+    }
+}
     </script>
 
   <div id="modelSelectModal" class="modal-overlay">
@@ -1940,33 +1964,104 @@ function closeModal(id) {
 </div>
 
 
-    <div id="userGuideModal" class="modal-overlay">
-  <div class="simple-modal">
-    <h3 style="color: #FFA726;">Quick User Guide</h3>
-    <div class="modal-content-text" style="margin-top: 10px;">
-      <p>Spencer AI works in both online and offline modes automatically.</p>
+   <div id="userGuideModal" class="modal-overlay">
+    <div class="simple-modal" style="max-width: 600px;">
+        <h2 style="color: #FFA726; text-align: center; margin-bottom: 20px;">
+            Quick User Guide<br>How to Use Spencer AI Offline Chatbot
+        </h2>
 
-      <h4>🌐 Online Mode</h4>
-      <ul>
-        <li>Real-time AI responses</li>
-        <li>Saves knowledge for offline use</li>
-      </ul>
+        <div class="modal-content-text">
+            <p style="margin-bottom: 20px; text-align: center;">
+                Spencer AI offline chatbot is an intelligent chatbot designed to provide quick and helpful responses.
+                You can use it in both <b>Online</b> and <b>Offline</b> modes automatically.
+            </p>
 
-      <h4>🚫 Offline Mode</h4>
-      <ul>
-        <li>Uses saved knowledge</li>
-        <li>Instant responses</li>
-      </ul>
+            <div class="guide-section">
+                <h3 style="color: #4CAF50; display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.5em;">🌐</span> Online Mode
+                </h3>
+                <p>
+                    When your device is connected to the internet, Spencer AI Offline Chatbot will use it to generate responses.
+                    This ensures that you get <b>real-time answers</b> with the latest AI-powered capabilities.
+                </p>
+                <ul style="padding-left: 20px; margin: 15px 0;">
+                    <li>Type your message in the chat input</li>
+                    <li>Press the "Send" button</li>
+                    <li>Wait for the AI to generate a response</li>
+                    <li>Responses are saved for offline use automatically</li>
+                    <li>Spencer AI learns from them and improves its offline capabilities</li>
+                </ul>
+            </div>
 
-      <h4 style="margin-top: 15px;">FAQs</h4>
-      <p><strong>How do I know my connection mode?</strong><br>
-      The network indicator at the top shows Online or Offline status.</p>
+            <div class="guide-section" style="margin-top: 25px;">
+                <h3 style="color: #F44336; display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.5em;">🚫</span> Offline Mode
+                </h3>
+                <p>
+                    If your device is <b>offline</b>, Spencer AI offline chatbot will switch to <b>Offline Mode</b>,
+                    where it provides responses based on learned data with the online chatbots and your prior interactions.
+                </p>
+                <ul style="padding-left: 20px; margin: 15px 0;">
+                    <li>If you've asked similar questions before, it will respond based on your history</li>
+                    <li>Provides instant responses without internet</li>
+                    <li>Uses knowledge saved from online sessions</li>
+                </ul>
+            </div>
 
-      <p><strong>How does offline learning work?</strong><br>
-      Spencer AI learns from your online chats and stores knowledge for offline use.</p>
+            <div class="guide-section" style="margin-top: 25px;">
+                <h3 style="color: #2196F3; display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.5em;">💾</span> Chat History
+                </h3>
+                <p>Your chat history is saved automatically for offline use.</p>
+            </div>
+
+            <div class="faq-section" style="margin-top: 30px; border-top: 1px solid #333; padding-top: 20px;">
+                <h3 style="color: #FFA726; text-align: center; margin-bottom: 20px;">
+                    <span style="font-size: 1.5em;">📌</span> Frequently Asked Questions
+                </h3>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <h4 style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <span>📶</span> How do I know if I'm in Online or Offline mode?
+                    </h4>
+                    <div class="faq-content" style="display: none; padding-left: 20px; margin-top: 8px;">
+                        <p>Spencer AI Offline Chatbot automatically detects your internet connection and shows the status in the network indicator at the top.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)" style="margin-top: 15px;">
+                    <h4 style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <span>📂</span> Can I save chat history for offline use?
+                    </h4>
+                    <div class="faq-content" style="display: none; padding-left: 20px; margin-top: 8px;">
+                        <p>Spencer AI Offline Chatbot automatically saves responses from Online Mode and reuses them when Offline.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)" style="margin-top: 15px;">
+                    <h4 style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <span>❌</span> How do I clear chat history?
+                    </h4>
+                    <div class="faq-content" style="display: none; padding-left: 20px; margin-top: 8px;">
+                        <p>The option to clear chat history is available in Settings > Storage Settings.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)" style="margin-top: 15px;">
+                    <h4 style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <span>🔄</span> Will Spencer AI learn from my responses?
+                    </h4>
+                    <div class="faq-content" style="display: none; padding-left: 20px; margin-top: 8px;">
+                        <p>Yes, Spencer AI learns from your conversations to improve responses, but only saves what's necessary for offline functionality.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="closeUserGuide" class="modal-btn cancel" style="margin-top: 25px; width: 100%;">
+            Close Guide
+        </button>
     </div>
-    <button id="closeUserGuide" class="modal-btn cancel" style="margin-top: 20px;">Close</button>
-  </div>
 </div>
 
 
@@ -2028,11 +2123,11 @@ function closeModal(id) {
 
 
 <!-- Default Statcounter code for Spencer Ai Offline Chatbot
-https://spencerlightspeed.vercel.app -->
+https://spencerlightspeed.vercel.app  -->
 <script type="text/javascript">
-var sc_project=13137273; 
-var sc_invisible=1; 
-var sc_security="8e99d8c2"; 
+var sc_project=13137273;
+var sc_invisible=1;
+var sc_security="8e99d8c2";
 </script>
 <script type="text/javascript"
 src="https://www.statcounter.com/counter/counter.js"
