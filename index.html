@@ -934,6 +934,23 @@ code {
     justify-content: center;
     margin-top: 10px;
 }
+
+.consent-box {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 165, 0, 0.1);
+    border-radius: 8px;
+}
+
+.consent-box input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.consent-box label {
+    cursor: pointer;
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -1032,6 +1049,16 @@ code {
         <div class="modal-content">
             <h2>Hi, I'm Spencer.<br>What's your name & email?</h2>
             <input type="text" id="nameInput" placeholder="Enter your name here">
+
+                <!-- Add this consent checkbox section -->
+                <div class="consent-box" style="margin: 15px 0; padding: 10px; background: rgba(255,165,0,0.1); border-radius: 8px;">
+                        <input type="checkbox" id="emailConsent" required>
+                        <label for="emailConsent" style="cursor: pointer; font-size: 0.9rem;">
+                                I agree to receive emails from Spencer AI (updates, tips, etc.)
+                        </label>
+                </div>
+                <!-- End of new section -->
+
             <input type="email" id="emailInput" placeholder="Enter your email here">
             <div class="button-group">
                 <button id="saveButton">Save</button>
@@ -1333,52 +1360,59 @@ document.getElementById('changeModelBtn')?.addEventListener('click', openModelMo
             return emailRegex.test(email);
         }
 
-        async function saveNameAndEmail() {
-            const name = nameInput.value.trim();
-            const email = emailInput.value.trim();
+       async function saveNameAndEmail() {
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const hasConsent = document.getElementById('emailConsent').checked;
 
-            if (!name) {
-                alert('Please enter a valid name!');
-                return;
-            }
-            if (!email) {
-                alert('Please enter your email!');
-                return;
-            }
-            if (!isValidEmail(email)) {
-                alert('Please enter a valid email address!');
-                return;
-            }
+    if (!name) {
+        alert('Please enter a valid name!');
+        return;
+    }
+    if (!email) {
+        alert('Please enter your email!');
+        return;
+    }
+    if (!isValidEmail(email)) {
+        alert('Please enter a valid email address!');
+        return;
+    }
+    if (!hasConsent) {
+        alert('Please agree to receive emails!');
+        return;
+    }
 
-            saveButton.disabled = true;
-            saveButton.textContent = 'Saving...';
+    saveButton.disabled = true;
+    saveButton.textContent = 'Saving...';
 
-            try {
-                const submissionSuccess = await submitUserInfo(name, email);
+    try {
+        const submissionSuccess = await submitUserInfo(name, email, hasConsent); // Updated
 
-                if (submissionSuccess) {
-                    localStorage.setItem(CONFIG.userNameKey, name);
-                    localStorage.setItem(CONFIG.userEmailKey, email);
-                    hideNameModal();
-                    displayWelcomeMessage(name);
-                } else {
-                    alert('Failed to submit your information. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error in saveNameAndEmail:', error);
-                alert('An unexpected error occurred. Please try again.');
-            } finally {
-                saveButton.disabled = false;
-                saveButton.textContent = 'Save';
-            }
+        if (submissionSuccess) {
+            localStorage.setItem(CONFIG.userNameKey, name);
+            localStorage.setItem(CONFIG.userEmailKey, email);
+            localStorage.setItem('emailConsent', hasConsent.toString()); // Store consent
+            hideNameModal();
+            displayWelcomeMessage(name);
+        } else {
+            alert('Failed to submit your information. Please try again.');
         }
+    } catch (error) {
+        console.error('Error in saveNameAndEmail:', error);
+        alert('An unexpected error occurred. Please try again.');
+    } finally {
+        saveButton.disabled = false;
+        saveButton.textContent = 'Save';
+    }
+}
 
-      async function submitUserInfo(name, email) {
-    const formSubmitURL = 'https://formsubmit.co/ajax/ukowills@gmail.com'; // AJAX endpoint
+     async function submitUserInfo(name, email, hasConsent) {
+    const formSubmitURL = 'https://formsubmit.co/ajax/ukowills@gmail.com';
 
     const data = {
         name: name,
         email: email,
+        consented: hasConsent, // Add consent status
         _subject: "New User Sign-up from Spencer Chat",
         _template: "table",
         timestamp: new Date().toISOString()
@@ -1394,18 +1428,8 @@ document.getElementById('changeModelBtn')?.addEventListener('click', openModelMo
             body: JSON.stringify(data),
         });
 
-        // Parse JSON response (FormSubmit returns { success: true/false })
         const result = await response.json();
-
-        // Check if FormSubmit confirmed success
-        if (result.success) {
-            console.log("Form submitted successfully:", result);
-            return true;
-        } else {
-            console.error("FormSubmit returned an error:", result.message);
-            return false;
-        }
-
+        return result.success;
     } catch (error) {
         console.error('Network/API error:', error);
         return false;
