@@ -951,6 +951,41 @@ code {
     font-size: 0.9rem;
     vertical-align: middle;
 }
+
+
+/* Toast Styles */
+#toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FFA500;
+    color: black;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(255,165,0,0.3);
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.toast-visible {
+    opacity: 1;
+}
+
+/* Validation Error Styles */
+.input-error {
+    border: 2px solid #ff4444 !important;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -961,7 +996,7 @@ code {
         </div>
     </div>
 
-<!-- For Devs only
+<!-- For Devs only 
     <button id="reset-user" style="position: fixed; bottom: 70px; right: 10px; z-index: 1000; padding: 8px 12px; background: #ff4444; color: white; border: none; border-radius: 5px; cursor: pointer;">
         Reset User
     </button>
@@ -1050,7 +1085,12 @@ code {
             <h2>Hi, I'm Spencer.<br>What's your name & email?</h2>
             <input type="text" id="nameInput" placeholder="Enter your name here">
 
-                <!-- Add this consent checkbox section -->
+            <input type="email" id="emailInput" placeholder="Enter your email here">
+            <div class="button-group">
+                <button id="saveButton">Save</button>
+            </div>
+            
+             <!-- Add this consent checkbox section -->
                 <div class="consent-box" style="margin: 15px 0; padding: 10px; background: rgba(255,165,0,0.1); border-radius: 8px;">
                         <input type="checkbox" id="emailConsent" required>
                         <label for="emailConsent" style="cursor: pointer; font-size: 0.9rem;">
@@ -1058,11 +1098,6 @@ code {
                         </label>
                 </div>
                 <!-- End of new section -->
-
-            <input type="email" id="emailInput" placeholder="Enter your email here">
-            <div class="button-group">
-                <button id="saveButton">Save</button>
-            </div>
         </div>
     </div>
 
@@ -1273,7 +1308,8 @@ function updateCurrentModelDisplay() {
             navChat.addEventListener('click', () => switchPage('chat'));
             navSettings.addEventListener('click', () => switchPage('settings'));
             saveButton.addEventListener('click', saveNameAndEmail);
-     <!-- Reset Button         resetUserBtn.addEventListener('click', resetUser);  -->
+   <!--Reset button resetUserBtn.addEventListener('click', resetUser); 
+   -->
           newChatBtn.addEventListener('click', startNewChat);
 
             document.getElementById('confirmModal').addEventListener('click', (e) => {
@@ -1377,11 +1413,10 @@ document.getElementById('changeModelBtn')?.addEventListener('click', openModelMo
         alert('Please enter a valid email address!');
         return;
     }
-    if (!hasConsent) {
-        alert('Please agree to receive emails!');
+      if (!hasConsent) {
+        showToast("Please tick the checkbox to continue");
         return;
     }
-
     saveButton.disabled = true;
     saveButton.textContent = 'Saving...';
 
@@ -1447,6 +1482,23 @@ document.getElementById('changeModelBtn')?.addEventListener('click', openModelMo
             }
             animateText(greetingText);
         }
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.remove('toast-hidden');
+    toast.classList.add('toast-visible');
+    
+    setTimeout(() => {
+        hideToast();
+    }, 3000);
+}
+
+function hideToast() {
+    const toast = document.getElementById('toast');
+    toast.classList.remove('toast-visible');
+    toast.classList.add('toast-hidden');
+}
 
         function animateText(text) {
             animatedText.textContent = "";
@@ -1975,6 +2027,80 @@ function toggleFAQ(element) {
         content.style.display = 'block';
     }
 }
+
+
+// Toast functions
+function showToast(message, duration = 3000) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.remove('toast-hidden');
+    toast.classList.add('toast-visible');
+    
+    setTimeout(() => {
+        toast.classList.remove('toast-visible');
+        toast.classList.add('toast-hidden');
+    }, duration);
+}
+
+// Validation functions
+function validateName(name) {
+    if (!name || name.trim().length < 2) {
+        showToast("Please enter a valid name (at least 2 characters)");
+        nameInput.classList.add('input-error');
+        setTimeout(() => nameInput.classList.remove('input-error'), 1000);
+        return false;
+    }
+    return true;
+}
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+        showToast("Please enter a valid email address");
+        emailInput.classList.add('input-error');
+        setTimeout(() => emailInput.classList.remove('input-error'), 1000);
+        return false;
+    }
+    return true;
+}
+
+// Updated save function
+async function saveNameAndEmail() {
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const hasConsent = document.getElementById('emailConsent').checked;
+
+    // Validate inputs
+    if (!validateName(name)) return;
+    if (!validateEmail(email)) return;
+    if (!hasConsent) {
+        showToast("Please agree to receive emails");
+        return;
+    }
+
+    // Save data
+    saveButton.disabled = true;
+    saveButton.textContent = 'Saving...';
+
+    try {
+        const submissionSuccess = await submitUserInfo(name, email, hasConsent);
+        if (submissionSuccess) {
+            localStorage.setItem(CONFIG.userNameKey, name);
+            localStorage.setItem(CONFIG.userEmailKey, email);
+            localStorage.setItem('emailConsent', hasConsent.toString());
+            hideNameModal();
+            displayWelcomeMessage(name);
+        } else {
+            showToast("Failed to save. Please try again.", 5000);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast("An error occurred. Please try again.", 5000);
+    } finally {
+        saveButton.disabled = false;
+        saveButton.textContent = 'Save';
+    }
+}
     </script>
 
   <div id="modelSelectModal" class="modal-overlay">
@@ -2144,8 +2270,6 @@ function toggleFAQ(element) {
 </div>
 
 
-
-
 <!-- Default Statcounter code for Spencer Ai Offline Chatbot
 https://spencerlightspeed.vercel.app  -->
 <script type="text/javascript">
@@ -2163,5 +2287,39 @@ src="https://c.statcounter.com/13137273/0/8e99d8c2/1/"
 alt="Web Analytics"
 referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 <!-- End of Statcounter Code -->
+
+
+<div id="toast" class="toast-hidden">
+    Please tick the checkbox to continue
+</div>
+
+<style>
+    #toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #FFA500;
+        color: black;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(255,165,0,0.3);
+        z-index: 1001;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .toast-visible {
+    opacity: 1 !important;
+
+    }
+    
+    .toast-hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+</style>
+
 </body>
 </html>
