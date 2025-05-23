@@ -952,39 +952,44 @@ code {
     vertical-align: middle;
 }
 
+/* Add to your existing styles */
+.affiliate-link {
+    color: #FFA500;
+    text-decoration: underline;
+    transition: all 0.2s;
+    position: relative;
+}
 
-/* Toast Styles */
-#toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #FFA500;
-    color: black;
-    padding: 12px 24px;
-    border-radius: 25px;
+.affiliate-link:hover {
+    color: #FF8C00;
+    text-decoration: none;
+}
+
+.affiliate-link::after {
+    content: "⇗";
+    font-size: 0.7em;
+    margin-left: 2px;
+    opacity: 0.7;
+}
+
+
+/* Add to your existing styles */
+.affiliate-link {
+    background: rgba(255,165,0,0.1);
+    padding: 2px 4px;
+    border-radius: 4px;
     font-weight: bold;
-    box-shadow: 0 4px 15px rgba(255,165,0,0.3);
-    z-index: 1001;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
+    transition: all 0.3s;
 }
 
-.toast-visible {
-    opacity: 1;
+.affiliate-link:hover {
+    background: rgba(255,165,0,0.2);
 }
 
-/* Validation Error Styles */
-.input-error {
-    border: 2px solid #ff4444 !important;
-    animation: shake 0.5s;
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+.ad-notice {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 5px;
 }
    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -996,7 +1001,7 @@ code {
         </div>
     </div>
 
-<!-- For Devs only 
+<!-- For Devs only
     <button id="reset-user" style="position: fixed; bottom: 70px; right: 10px; z-index: 1000; padding: 8px 12px; background: #ff4444; color: white; border: none; border-radius: 5px; cursor: pointer;">
         Reset User
     </button>
@@ -1030,6 +1035,19 @@ code {
     <p>Current model: <strong id="currentModelName">Loading...</strong></p>
     <button id="changeModelBtn" class="settings-button" style="width:100%; margin-top:10px;">
         <i class="fas fa-exchange-alt"></i> Change Model
+    </button>
+</div>
+
+<!-- Add to settings page -->
+<div class="settings-card">
+    <h3><i class="fas fa-crown"></i> Premium Features</h3>
+    <ul>
+        <li>Unlimited message history</li>
+        <li>Priority support</li>
+        <li>Exclusive AI models</li>
+    </ul>
+    <button id="upgradeButton" class="action-btn" style="background:linear-gradient(45deg,#FFA500,#FF4500)">
+        <i class="fas fa-rocket"></i> Upgrade Now ($9.99/month)
     </button>
 </div>
 
@@ -1085,12 +1103,7 @@ code {
             <h2>Hi, I'm Spencer.<br>What's your name & email?</h2>
             <input type="text" id="nameInput" placeholder="Enter your name here">
 
-            <input type="email" id="emailInput" placeholder="Enter your email here">
-            <div class="button-group">
-                <button id="saveButton">Save</button>
-            </div>
-            
-             <!-- Add this consent checkbox section -->
+                <!-- Add this consent checkbox section -->
                 <div class="consent-box" style="margin: 15px 0; padding: 10px; background: rgba(255,165,0,0.1); border-radius: 8px;">
                         <input type="checkbox" id="emailConsent" required>
                         <label for="emailConsent" style="cursor: pointer; font-size: 0.9rem;">
@@ -1098,6 +1111,11 @@ code {
                         </label>
                 </div>
                 <!-- End of new section -->
+
+            <input type="email" id="emailInput" placeholder="Enter your email here">
+            <div class="button-group">
+                <button id="saveButton">Save</button>
+            </div>
         </div>
     </div>
 
@@ -1113,6 +1131,79 @@ code {
     </div>
 
     <script>
+
+    // Add to your JavaScript for the upgrade button
+document.getElementById('upgradeButton').addEventListener('click', () => {
+    // Integrate with Stripe/PayPal
+    window.open('https://pubertytechnicallyknowhow.com/m06est9z?key=c719d5e4c9dd79e8821c8639b98ab94f', '_blank');
+});
+
+// Add this near your other constants (like CONFIG)
+const ADSTERRA_LINK = "https://pubertytechnicallyknowhow.com/m06est9z?key=c719d5e4c9dd79e8821c8639b98ab94f";
+
+const KEYWORD_TIERS = {
+    tier1: {
+        'make money online': 5,
+        'get paid to': 5,
+        'free cash': 5,
+        'earn from home': 5,
+        'discount': 4,
+        'coupon': 4,
+         'hello': 3,
+    'hi there': 3,
+    'good morning': 3,
+    'good evening': 3,
+    'hey': 3,
+    'hi': 3,
+    'how are you': 4,
+    "what's up": 4,
+    'how is your day': 4,
+    'having fun': 3,
+    'doing good': 3
+    ,
+
+    },
+    tier2: {
+        'cheap phone': 4,
+        'gaming deal': 4,
+        'stream free': 4,
+        'laptop': 3,
+        'smartphone': 3 ,
+
+
+
+            'hello': 3,
+        'hi there': 3,
+        'good morning': 3,
+        'good evening': 3,
+        'hey': 3,
+
+        // Small talk
+        'how are you': 4,
+        "what's up": 4,
+        'how is your day': 4,
+        'having fun': 3,
+        'doing good': 3,
+
+        // Conversational
+        'tell me': 4,
+        'suggest': 4,
+        'recommend': 4,
+        'any ideas': 4,
+        'looking for': 5,
+
+        // Common interests
+        'shopping': 4,
+        'deals': 5,
+        'discount': 5,
+        'free stuff': 5,
+        'make money': 5
+
+
+    }
+};
+
+
         // Configuration
         const CONFIG = {
             chatHistoryKey: "spencer_chat_history",
@@ -1203,6 +1294,13 @@ code {
         const newChatBtn = document.getElementById('new-chat-btn');
         const resetUserBtn = document.getElementById('reset-user');
 
+             // Put this with your other utility functions
+function trackAdClick(keyword) {
+    gtag('event', 'ad_click', {
+        'keyword': keyword,
+        'timestamp': Date.now()
+    });
+}
 
          function openModelModal() {
     document.getElementById('modelSelectModal').classList.add('active');
@@ -1308,8 +1406,7 @@ function updateCurrentModelDisplay() {
             navChat.addEventListener('click', () => switchPage('chat'));
             navSettings.addEventListener('click', () => switchPage('settings'));
             saveButton.addEventListener('click', saveNameAndEmail);
-   <!--Reset button resetUserBtn.addEventListener('click', resetUser); 
-   -->
+     <!-- Reset Button         resetUserBtn.addEventListener('click', resetUser);  -->
           newChatBtn.addEventListener('click', startNewChat);
 
             document.getElementById('confirmModal').addEventListener('click', (e) => {
@@ -1413,10 +1510,11 @@ document.getElementById('changeModelBtn')?.addEventListener('click', openModelMo
         alert('Please enter a valid email address!');
         return;
     }
-      if (!hasConsent) {
-        showToast("Please tick the checkbox to continue");
+    if (!hasConsent) {
+        alert('Please agree to receive emails!');
         return;
     }
+
     saveButton.disabled = true;
     saveButton.textContent = 'Saving...';
 
@@ -1482,23 +1580,6 @@ document.getElementById('changeModelBtn')?.addEventListener('click', openModelMo
             }
             animateText(greetingText);
         }
-
-function showToast(message) {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.classList.remove('toast-hidden');
-    toast.classList.add('toast-visible');
-    
-    setTimeout(() => {
-        hideToast();
-    }, 3000);
-}
-
-function hideToast() {
-    const toast = document.getElementById('toast');
-    toast.classList.remove('toast-visible');
-    toast.classList.add('toast-hidden');
-}
 
         function animateText(text) {
             animatedText.textContent = "";
@@ -1791,7 +1872,30 @@ function toggleFAQ(element) {
     if (!text.startsWith('<p>')) text = '<p>' + text;
     if (!text.endsWith('</p>')) text += '</p>';
 
+     // Add this BEFORE the final return statement
+  text = addAffiliateLinks(text);
+
+
     return text.replace(/<p><\/p>/g, '').trim();
+}
+
+function addAffiliateLinks(text) {
+    const allKeywords = {...KEYWORD_TIERS.tier1, ...KEYWORD_TIERS.tier2};
+    let linkAdded = false;
+
+    Object.entries(allKeywords)
+        .sort((a,b) => b[1] - a[1])
+        .forEach(([phrase]) => {
+            if (!linkAdded && new RegExp(`\\b${phrase}\\b`, 'i').test(text)) {
+                text = text.replace(
+                    new RegExp(`\\b${phrase}\\b`, 'gi'),
+                    `<a href="${ADSTERRA_LINK}" onclick="trackAdClick('${phrase}')" class="affiliate-link" target="_blank">${phrase}</a>`
+                );
+                linkAdded = true;
+            }
+        });
+
+    return text;
 }
 
 function copyCode(button) {
@@ -2027,80 +2131,6 @@ function toggleFAQ(element) {
         content.style.display = 'block';
     }
 }
-
-
-// Toast functions
-function showToast(message, duration = 3000) {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.classList.remove('toast-hidden');
-    toast.classList.add('toast-visible');
-    
-    setTimeout(() => {
-        toast.classList.remove('toast-visible');
-        toast.classList.add('toast-hidden');
-    }, duration);
-}
-
-// Validation functions
-function validateName(name) {
-    if (!name || name.trim().length < 2) {
-        showToast("Please enter a valid name (at least 2 characters)");
-        nameInput.classList.add('input-error');
-        setTimeout(() => nameInput.classList.remove('input-error'), 1000);
-        return false;
-    }
-    return true;
-}
-
-function validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
-        showToast("Please enter a valid email address");
-        emailInput.classList.add('input-error');
-        setTimeout(() => emailInput.classList.remove('input-error'), 1000);
-        return false;
-    }
-    return true;
-}
-
-// Updated save function
-async function saveNameAndEmail() {
-    const name = nameInput.value.trim();
-    const email = emailInput.value.trim();
-    const hasConsent = document.getElementById('emailConsent').checked;
-
-    // Validate inputs
-    if (!validateName(name)) return;
-    if (!validateEmail(email)) return;
-    if (!hasConsent) {
-        showToast("Please agree to receive emails");
-        return;
-    }
-
-    // Save data
-    saveButton.disabled = true;
-    saveButton.textContent = 'Saving...';
-
-    try {
-        const submissionSuccess = await submitUserInfo(name, email, hasConsent);
-        if (submissionSuccess) {
-            localStorage.setItem(CONFIG.userNameKey, name);
-            localStorage.setItem(CONFIG.userEmailKey, email);
-            localStorage.setItem('emailConsent', hasConsent.toString());
-            hideNameModal();
-            displayWelcomeMessage(name);
-        } else {
-            showToast("Failed to save. Please try again.", 5000);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showToast("An error occurred. Please try again.", 5000);
-    } finally {
-        saveButton.disabled = false;
-        saveButton.textContent = 'Save';
-    }
-}
     </script>
 
   <div id="modelSelectModal" class="modal-overlay">
@@ -2270,6 +2300,8 @@ async function saveNameAndEmail() {
 </div>
 
 
+
+
 <!-- Default Statcounter code for Spencer Ai Offline Chatbot
 https://spencerlightspeed.vercel.app  -->
 <script type="text/javascript">
@@ -2287,39 +2319,5 @@ src="https://c.statcounter.com/13137273/0/8e99d8c2/1/"
 alt="Web Analytics"
 referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 <!-- End of Statcounter Code -->
-
-
-<div id="toast" class="toast-hidden">
-    Please tick the checkbox to continue
-</div>
-
-<style>
-    #toast {
-        position: fixed;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #FFA500;
-        color: black;
-        padding: 12px 24px;
-        border-radius: 25px;
-        font-weight: bold;
-        box-shadow: 0 4px 15px rgba(255,165,0,0.3);
-        z-index: 1001;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    
-    .toast-visible {
-    opacity: 1 !important;
-
-    }
-    
-    .toast-hidden {
-        opacity: 0;
-        pointer-events: none;
-    }
-</style>
-
 </body>
 </html>
