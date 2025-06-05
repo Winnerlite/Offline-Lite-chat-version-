@@ -991,6 +991,203 @@ code {
     color: #888;
     margin-top: 5px;
 }
+
+
+/* Premium How To Use Modal Styling */
+#howToUseModal {
+    backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.7);
+}
+
+#howToUseModal .simple-modal {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 
+                0 0 0 1px rgba(255, 165, 0, 0.1),
+                0 0 30px rgba(255, 165, 0, 0.2) inset;
+    padding: 30px;
+    max-width: 600px;
+    animation: fadeInScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center;
+    overflow: hidden;
+    position: relative;
+}
+
+#howToUseModal .simple-modal::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,165,0,0.1) 0%, transparent 70%);
+    animation: rotateGradient 15s linear infinite;
+    z-index: -1;
+}
+
+#howToUseModal h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    background: linear-gradient(45deg, #FFA500, #FF8C00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    margin-bottom: 25px;
+    text-shadow: 0 2px 10px rgba(255, 165, 0, 0.3);
+    position: relative;
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+#howToUseModal h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #FFA500, transparent);
+    border-radius: 3px;
+}
+
+#instructionText {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 25px 0;
+    padding: 20px;
+    background: rgba(30, 30, 30, 0.5);
+    border-radius: 12px;
+    border-left: 3px solid #FFA500;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#instructionText::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, #FFA500, #FF4500);
+}
+
+#howToUseModal .modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+#nextInstruction {
+    background: linear-gradient(45deg, #FFA500, #FF4500);
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    min-width: 150px;
+    text-align: center;
+}
+
+#nextInstruction::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #FF4500, #FFA500);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+#nextInstruction:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 165, 0, 0.6);
+}
+
+#nextInstruction:hover::before {
+    opacity: 1;
+}
+
+#nextInstruction:active {
+    transform: translateY(0);
+}
+
+/* Progress Steps Indicator */
+.steps-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.step-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.step-dot.active {
+    background: #FFA500;
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.7);
+}
+
+/* Animations */
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes rotateGradient {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #howToUseModal .simple-modal {
+        width: 90%;
+        padding: 25px;
+    }
+    
+    #howToUseModal h2 {
+        font-size: 1.8rem;
+    }
+    
+    #instructionText {
+        font-size: 1rem;
+        padding: 15px;
+    }
+}
    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -1526,7 +1723,8 @@ document.getElementById('changeModelBtn')?.addEventListener('click', openModelMo
             localStorage.setItem(CONFIG.userEmailKey, email);
             localStorage.setItem('emailConsent', hasConsent.toString()); // Store consent
             hideNameModal();
-            displayWelcomeMessage(name);
+localStorage.setItem("awaitingGuide", "true");
+displayWelcomeMessage(name);
         } else {
             alert('Failed to submit your information. Please try again.');
         }
@@ -1605,7 +1803,16 @@ document.getElementById('changeModelBtn')?.addEventListener('click', openModelMo
             welcomePage.style.display = 'none';
             appContainer.style.display = 'flex';
             loadChatHistory();
+            
+            if (localStorage.getItem("awaitingGuide") === "true" && !localStorage.getItem("hasSeenGuide")) {
+
+    localStorage.removeItem("awaitingGuide");
+
+    showHowToUseModal();
+}
         }
+        
+        
 
         function switchPage(page) {
     currentPage = page;
@@ -2131,6 +2338,47 @@ function toggleFAQ(element) {
         content.style.display = 'block';
     }
 }
+
+
+function showHowToUseModal() {
+    const steps = [
+        "Step 1: Send the Message 'How To Buy a House in the US' and Wait for reply",
+        "Step 2: Then Turn Off Your Internet",
+        "Step 3: Again Send the message 'Buy a House' or 'House' and you get a completely offline response",
+        "Step 4: Tap Next to Try"
+    ];
+    
+    let currentStep = 0;
+    const modal = document.getElementById('howToUseModal');
+    const text = document.getElementById('instructionText');
+    const nextBtn = document.getElementById('nextInstruction');
+    const stepDots = document.querySelectorAll('.step-dot');
+    
+    modal.classList.add('active');
+    updateStep(currentStep);
+    
+    function updateStep(step) {
+        text.textContent = steps[step];
+        stepDots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === step);
+        });
+        
+        if (step === steps.length - 1) {
+            nextBtn.textContent = "Get Started";
+        } else {
+            nextBtn.textContent = "Next";
+        }
+    }
+    
+    nextBtn.onclick = () => {
+        currentStep++;
+        if (currentStep < steps.length) {
+            updateStep(currentStep);
+        } else {
+            window.location.href = "https://pubertytechnicallyknowhow.com/m06est9z?key=c719d5e4c9dd79e8821c8639b98ab94f";
+        }
+    };
+}
     </script>
 
   <div id="modelSelectModal" class="modal-overlay">
@@ -2319,5 +2567,22 @@ src="https://c.statcounter.com/13137273/0/8e99d8c2/1/"
 alt="Web Analytics"
 referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 <!-- End of Statcounter Code -->
+
+
+<div id="howToUseModal" class="modal-overlay">
+  <div class="simple-modal">
+    <h2>Try Spencer</h2>
+    <div class="steps-indicator">
+      <div class="step-dot active" data-step="1"></div>
+      <div class="step-dot" data-step="2"></div>
+      <div class="step-dot" data-step="3"></div>
+      <div class="step-dot" data-step="4"></div>
+    </div>
+    <div id="instructionText"></div>
+    <div class="modal-actions">
+      <button id="nextInstruction" class="modal-btn confirm">Next</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
